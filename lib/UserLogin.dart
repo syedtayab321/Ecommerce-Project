@@ -39,6 +39,9 @@ class _UserloginState extends State<Userlogin> {
           showSuccessSnackbar('sucessfully logged in as admin');
           Get.offNamedUntil('/admindashboard',(route)=>false);
         }
+        else{
+          showErrorSnackbar("wrong cridentials");
+        }
       } on FirebaseAuthException catch(e){
         showErrorSnackbar(e.code.toString());
       }
