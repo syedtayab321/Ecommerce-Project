@@ -1,5 +1,6 @@
-import 'package:ecommerce_app/Admin/MainPages/AddCart.dart';
-import 'package:ecommerce_app/Admin/MainPages/HomePage.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/AddCart.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/HomePage.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/Profile.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,6 @@ class AdminController extends GetxController {
     HomePage(),
     AddtoCart(),
     AddtoCart(),
-    AddtoCart(),
+    ProfilePage(),
   ];
 }

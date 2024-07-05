@@ -15,8 +15,8 @@ class AdminDashboard extends StatelessWidget {
       bottomNavigationBar: Obx(() {
         return ConvexAppBar(
           backgroundColor: Colors.white,
-          color: Colors.grey,
-          activeColor: Colors.orange,
+          color: Colors.black54,
+          activeColor: Colors.green,
           style: TabStyle.reactCircle,
           items: [
             TabItem(icon: Icons.store, title: 'Shop'),

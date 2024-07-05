@@ -1,4 +1,3 @@
-import 'package:ecommerce_app/Admin/Dashboard.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/Snakbar.dart';
@@ -6,7 +5,7 @@ import 'package:ecommerce_app/widgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class Userlogin extends StatefulWidget {
   const Userlogin({super.key});
 
@@ -15,29 +14,34 @@ class Userlogin extends StatefulWidget {
 }
 
 class _UserloginState extends State<Userlogin> {
-  final _formkey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordControlller = TextEditingController();
-  final _fixedemail = "admin321@gmail.com";
-  final _fixedpassword = "123456";
 
-  void login() {
-    try {
-        String email = _emailController.text;
-        String password = _passwordControlller.text;
-
-        if (email == _fixedemail && password == _fixedpassword) {
-          showSuccessSnackbar("Login sucessfull! Congragulations");
-          Get.off(AdminDashboard());
-        } else if (email == _fixedemail && password != _fixedpassword) {
-          showErrorSnackbar("Password not correct try agian");
-        } else if (email != _fixedemail && password == _fixedpassword) {
-          showErrorSnackbar("Email id not correct try agian");
-        } else if (email != _fixedemail && password != _fixedpassword) {
-          showErrorSnackbar("Both cridentials are Wrong");
+  void login() async{
+    String email = _emailController.text;
+    String password = _passwordControlller.text;
+    if(email=='' || password=='')
+    {
+      showErrorSnackbar("Please Fill All cridentials");
+    }
+    else {
+      try  {
+        UserCredential userCredential=await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: email,
+            password: password
+        );
+        String uids=FirebaseAuth.instance.currentUser!.uid;
+        if(userCredential!='' && uids=='R0NsyGjo4SbFMjTUlMjDBtvhoUb2'){
+          showSuccessSnackbar('sucessfully logged in as user');
+          Get.offNamedUntil('/userdashboard',(route)=>false);
         }
-    } catch (e) {
-      showErrorSnackbar("unexpected error occur");
+        else if(userCredential!='' && uids=='rEKWBRQyLTTBXf14LrYU13VMXXo2'){
+          showSuccessSnackbar('sucessfully logged in as admin');
+          Get.offNamedUntil('/admindashboard',(route)=>false);
+        }
+      } on FirebaseAuthException catch(e){
+        showErrorSnackbar(e.code.toString());
+      }
     }
   }
 

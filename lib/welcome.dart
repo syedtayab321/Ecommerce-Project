@@ -1,10 +1,9 @@
-import 'package:ecommerce_app/User/UserLogin.dart';
+import 'package:ecommerce_app/UserLogin.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -46,12 +45,12 @@ class _WelcomeState extends State<Welcome> {
                           size: 18,
                       ),
                       SizedBox(height: 30),
-                      Elevated_button(text: 'Click To Logged In', color: Colors.black, radius: 10, padding: 20, fontsize: 18,
-                          path:(){
-                            Get.to(Userlogin());
-                          },
-                          width: double.infinity,
-                          height: 60,
+                      Elevated_button(text: 'Click To LoggedI', color: Colors.black, radius: 10, padding: 10, fontsize: 15,
+                        path:(){
+                          Get.to(Userlogin());
+                        },
+                        width: double.infinity,
+                        height: 60,
                       ),
                       SizedBox(height: 20),
                       Row(

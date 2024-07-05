@@ -11,6 +11,7 @@ class ResuableTextField extends StatelessWidget {
   final Icon? prefixicon;
   final double? radius;
   final bool? value;
+  final Color? fillcolor;
   final String? Function(String?)? validator;
   const ResuableTextField({
     required this.type,
@@ -21,6 +22,7 @@ class ResuableTextField extends StatelessWidget {
     this.radius=8.0,
     this.value=false,
     this.validator,
+    this.fillcolor,
 });
 
   @override
@@ -32,9 +34,10 @@ class ResuableTextField extends StatelessWidget {
          label: TextWidget(title: label,),
          prefixIcon: prefixicon,
          suffixIcon: suffixicon,
+         fillColor: fillcolor,
          border: OutlineInputBorder(
            borderRadius: BorderRadius.circular(radius!),
-         )
+         ),
        ),
         obscureText: value!,
         validator: validator,
