@@ -2,6 +2,9 @@ import 'package:ecommerce_app/Admin/Dashboard.dart';
 import 'package:ecommerce_app/User/UserDashboard.dart';
 import 'package:ecommerce_app/firebase_options.dart';
 import 'package:ecommerce_app/splashscreen.dart';
+import 'package:ecommerce_app/welcome.dart';
+import 'package:ecommerce_app/Admin/ProductPages/ProductCard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,8 +33,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => SplashScreen()),
-        GetPage(name: '/admindashboard', page: () => AdminDashboard()),
-        GetPage(name: '/userdashboard', page: () => Userdashboard()),
+        GetPage(name: '/admindashboard', page: () => FirebaseAuth.instance.currentUser!=''?AdminDashboard():Welcome()),
+        GetPage(name: '/userdashboard', page: () => FirebaseAuth.instance.currentUser!=''?Userdashboard():Welcome()),
       ],
     );
   }

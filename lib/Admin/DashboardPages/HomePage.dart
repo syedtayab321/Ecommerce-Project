@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/TextFormField.dart';
+import 'package:ecommerce_app/widgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +11,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<String> CategoryName=[
+     'Chocolates',
+     'Snikers',
+     'Cote Dore',
+     'Mars',
+     'M & M',
+     'Maltesers',
+    'Kit Kat',
+    'Candies',
+    'Biscuits',
+    'Drinks',
+  ] ;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,14 +110,10 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Elevated_button(
-                        path: (){},
-                        color: Colors.white,
-                        text: 'Add Category',
-                        radius: 10,
-                        padding: 10,
-                        width: 200,
-                        height: 20,
-                        backcolor: Colors.green,
+                        path: (){
+
+                        },
+                        color: Colors.white, text: 'Add Category', radius: 10, padding: 10, width: 200, height: 20, backcolor: Colors.green,
                       )
                     ),
                   ],
@@ -120,48 +129,43 @@ class _HomePageState extends State<HomePage> {
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                     ),
-                    itemCount: 16, // Number of items
+                    itemCount: 4, // Number of items
                     itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: (){
-
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15),
-                                  ),
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/images/chocolate.jpg'), // Product image
-                                    fit: BoxFit.cover,
-                                  ),
+                      return Card(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  topRight: Radius.circular(15),
+                                ),
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/chocolate.jpg'), // Product image
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Taylor Plush 4-Piece Modular Chaise',
-                                  style: TextStyle(fontSize: 16),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Taylor Plush 4-Piece Modular Chaise',
+                                style: TextStyle(fontSize: 16),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(
-                                  '\$293.00',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                '\$293.00',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     },

@@ -31,7 +31,7 @@ class _UserloginState extends State<Userlogin> {
             password: password
         );
         String uids=FirebaseAuth.instance.currentUser!.uid;
-        if(userCredential!='' && uids=='R0NsyGjo4SbFMjTUlMjDBtvhoUb2'){
+        if(userCredential!='' && uids=='iL1ZD6cyXcYI49Z7N56aGf6SMUj2'){
           showSuccessSnackbar('sucessfully logged in as user');
           Get.offNamedUntil('/userdashboard',(route)=>false);
         }
@@ -103,6 +103,7 @@ class _UserloginState extends State<Userlogin> {
                     ResuableTextField(
                       type: TextInputType.text,
                       label: "Password",
+                      value: true,
                       prefixicon: Icon(Icons.password),
                       suffixicon: Icon_Button(
                         onPressed: () {},
