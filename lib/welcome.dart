@@ -47,7 +47,7 @@ class _WelcomeState extends State<Welcome> {
                       SizedBox(height: 30),
                       Elevated_button(text: 'Click To LoggedI', color: Colors.black, radius: 10, padding: 10, fontsize: 15,
                         path:(){
-                          Get.to(Userlogin());
+                          Get.to(Userlogin(), transition: Transition.fadeIn, duration: Duration(seconds: 2));
                         },
                         width: double.infinity,
                         height: 60,

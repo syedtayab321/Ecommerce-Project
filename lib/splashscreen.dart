@@ -1,5 +1,10 @@
 import 'dart:async';
+import 'package:ecommerce_app/Admin/Dashboard.dart';
+import 'package:ecommerce_app/Models/Authentication.dart';
+import 'package:ecommerce_app/Models/AuthenticationModel.dart';
+import 'package:ecommerce_app/User/UserDashboard.dart';
 import 'package:ecommerce_app/welcome.dart';
+import 'package:ecommerce_app/widgets/Snakbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,15 +17,42 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final AuthService _authService = AuthService();
+
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 5), () {
-      Get.off(() => Welcome(),
-          transition: Transition.fadeIn, duration: Duration(seconds: 2));
-    });
+    _checkLoginStatus();
   }
 
+  Future<void> _checkLoginStatus() async {
+    String? uid = await _authService.getUserFromPreferences();
+    if (uid != null) {
+      UserModel? userModel = await _authService.getUserRole(uid);
+      if (userModel != null) {
+        if (userModel.role == 'Admin') {
+          Timer(Duration(seconds: 5), () {
+            Get.off(() => AdminDashboard(),
+                transition: Transition.fadeIn, duration: Duration(seconds: 2));
+          });
+        } else if(userModel.role == 'User') {
+          Timer(Duration(seconds: 5), () {
+            Get.off(() => Userdashboard(),
+                transition: Transition.fadeIn, duration: Duration(seconds: 2));
+          });
+        }
+      }
+      else
+        {
+          showErrorSnackbar(uid);
+        }
+    } else {
+      Timer(Duration(seconds: 5), () {
+        Get.off(() => Welcome(),
+            transition: Transition.fadeIn, duration: Duration(seconds: 2));
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

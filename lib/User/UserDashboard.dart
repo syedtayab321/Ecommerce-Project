@@ -1,9 +1,11 @@
+import 'package:ecommerce_app/Models/Authentication.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Userdashboard extends StatelessWidget {
+  final AuthService _authService=AuthService();
    void logout() async{
        Get.defaultDialog(
          title: "Logout",
@@ -12,8 +14,7 @@ class Userdashboard extends StatelessWidget {
          textCancel: "No",
          confirmTextColor: Colors.white,
          onConfirm: () {
-           FirebaseAuth.instance.signOut();
-           Get.offAllNamed('/');
+           _authService.signOut();
          },
          onCancel: () {
            Get.back();

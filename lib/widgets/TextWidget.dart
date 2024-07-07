@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 class TextWidget extends StatelessWidget {
   final String title;
   final Color? color;
-  final double? size;
+  final double? size,spacing;
   final FontWeight? weight;
 
   const TextWidget({
@@ -11,6 +11,7 @@ class TextWidget extends StatelessWidget {
     this.color,
     this.size,
     this.weight,
+    this.spacing
   });
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,7 @@ class TextWidget extends StatelessWidget {
         color: color,
         fontSize: size,
         fontWeight: weight,
+        letterSpacing: spacing,
       ),
     );
   }

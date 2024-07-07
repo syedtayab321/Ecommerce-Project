@@ -1,11 +1,15 @@
+import 'package:ecommerce_app/Admin/Dashboard.dart';
+import 'package:ecommerce_app/Models/Authentication.dart';
+import 'package:ecommerce_app/Models/AuthenticationModel.dart';
+import 'package:ecommerce_app/User/UserDashboard.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/Snakbar.dart';
 import 'package:ecommerce_app/widgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/TextWidget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 class Userlogin extends StatefulWidget {
   const Userlogin({super.key});
 
@@ -15,39 +19,32 @@ class Userlogin extends StatefulWidget {
 
 class _UserloginState extends State<Userlogin> {
   final _emailController = TextEditingController();
-  final _passwordControlller = TextEditingController();
+  final _passwordController = TextEditingController();
+  final AuthService _authService=AuthService();
 
-  void login() async{
-    String email = _emailController.text;
-    String password = _passwordControlller.text;
-    if(email=='' || password=='')
-    {
-      showErrorSnackbar("Please Fill All cridentials");
-    }
-    else {
-      try  {
-        UserCredential userCredential=await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: email,
-            password: password
-        );
-        String uids=FirebaseAuth.instance.currentUser!.uid;
-        if(userCredential!='' && uids=='iL1ZD6cyXcYI49Z7N56aGf6SMUj2'){
-          showSuccessSnackbar('sucessfully logged in as user');
-          Get.offNamedUntil('/userdashboard',(route)=>false);
+  void Login() async{
+    User? user = await _authService.signIn(_emailController.text, _passwordController.text);
+    if (user != null) {
+       await _authService.saveUserToPreferences(user.uid);
+      String? uid = await _authService.getUserFromPreferences();
+      UserModel? userModel = await _authService.getUserRole(uid!);
+      if (userModel != null) {
+        if (userModel.role == 'Admin') {
+          Get.off(() => AdminDashboard(),
+              transition: Transition.fadeIn, duration: Duration(seconds: 2));
+          showSuccessSnackbar('Login Sucessfully');
+        } else if(userModel.role == 'User') {
+          Get.off(() => Userdashboard(),
+              transition: Transition.fadeIn, duration: Duration(seconds: 2));
+          showSuccessSnackbar('Login Sucessfully');
         }
-        else if(userCredential!='' && uids=='rEKWBRQyLTTBXf14LrYU13VMXXo2'){
-          showSuccessSnackbar('sucessfully logged in as admin');
-          Get.offNamedUntil('/admindashboard',(route)=>false);
-        }
-        else{
-          showErrorSnackbar("wrong cridentials");
-        }
-      } on FirebaseAuthException catch(e){
-        showErrorSnackbar(e.code.toString());
       }
     }
+    else
+      {
+      showErrorSnackbar('user is null');
+    }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,8 +53,8 @@ class _UserloginState extends State<Userlogin> {
         Image(
           image: AssetImage('assets/images/back.jpg'),
           fit: BoxFit.cover,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          width: Get.width,
+          height: Get.height,
         ),
         Center(
           child: SingleChildScrollView(
@@ -112,7 +109,7 @@ class _UserloginState extends State<Userlogin> {
                         onPressed: () {},
                         icon: Icon(Icons.remove_red_eye),
                       ),
-                      controller: _passwordControlller,
+                      controller: _passwordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
@@ -143,7 +140,7 @@ class _UserloginState extends State<Userlogin> {
                         fontsize: 16,
                         radius: 12,
                         backcolor: Colors.black,
-                        path: login,
+                        path: Login,
                         width: double.infinity,
                         height: 60,
                       ),
