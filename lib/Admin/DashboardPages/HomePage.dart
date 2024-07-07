@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/ProductPages/SubCategoryPage.dart';
-import 'package:ecommerce_app/FirebaseCruds/CategoryAddition.dart';
+import 'package:ecommerce_app/widgets/AddCategoryDialogBox.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/Icon_Button.dart';
-import 'package:ecommerce_app/widgets/Snakbar.dart';
 import 'package:ecommerce_app/widgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/TextWidget.dart';
 import 'package:flutter/material.dart';
@@ -15,56 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-   TextEditingController _nameController=new TextEditingController();
-   void CategoryAdd(){
-      addMainCategory(_nameController.text);
-      showSuccessSnackbar("Category Added Sucessfully");
-      Get.back();
-      _nameController.clear();
-    }
-   void DialogBox(){
-     Get.defaultDialog(
-       title: 'Add Category Name',
-       titleStyle: TextStyle(
-         fontSize: 22,
-         fontWeight: FontWeight.bold,
-         color: Colors.deepPurple,
-       ),
-       content: Column(
-         children: [
-           ResuableTextField(
-             type: TextInputType.text,
-             label: 'Category Name',
-             controller: _nameController,
-           ),
-           SizedBox(height: 20),
-           Row(
-             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-             children: [
-               Elevated_button(color: Colors.white,
-                 text: 'Add', radius: 10, padding: 10, width: 100, height: 40, backcolor: Colors.green,
-                 path: () {
-                   CategoryAdd();
-                 },
-               ),
-               Elevated_button(
-                 color: Colors.white, text: 'Cancel', radius: 10, padding: 10, width: 100, height: 40,
-                 backcolor: Colors.red.shade800,
-                 path: () {
-                   Get.back();
-                   _nameController.clear();
-                 },
-               ),
-             ],
-           ),
-         ],
-       ),
-       radius: 15,
-       backgroundColor: Colors.white,
-       barrierDismissible: true,
-       contentPadding: EdgeInsets.all(20),
-     );
-   }
+
+  final Addcategorydialogbox _Dialog=Addcategorydialogbox();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,25 +23,8 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
-        title: Row(
-          children: [
-            Image.asset('assets/images/logo.png', height: 40), // Your logo
-            SizedBox(width: 10),
-            Expanded(
-              child: ResuableTextField(
-                type: TextInputType.text,
-                radius: 17,
-                label: 'search',
-                fillcolor: Colors.transparent,
-                suffixicon: Icon_Button(
-                  icon: Icon(Icons.search),
-                  onPressed: () {},
-                ),
-              ),
-            ),
-          ],
+        title: Image(image: AssetImage('assets/images/logo.png'),width: 200,height: 100,),
         ),
-      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('MainCategories').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -102,11 +36,31 @@ class _HomePageState extends State<HomePage> {
             return Center(child: Text('No data found'));
           } else {
             return Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 6.0),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0,right: 12.0),
+                            child: ResuableTextField(
+                              type: TextInputType.text,
+                              radius: 12,
+                              label: 'search',
+                              fillcolor: Colors.transparent,
+                              suffixicon: Icon_Button(
+                                icon: Icon(Icons.search),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Container(
@@ -163,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.all(16.0),
                           child: Elevated_button(
                             path: () => {
-                              DialogBox(),
+                               _Dialog.DialogBox(),
                             },
                             color: Colors.white,
                             text: 'Add Category',
@@ -189,6 +143,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
+                          var ImageData=snapshot.data!.docs[index].data() as Map<String,dynamic>;
                           DocumentSnapshot category = snapshot.data!.docs[index];
                           return InkWell(
                             onTap: () {

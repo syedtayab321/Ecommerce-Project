@@ -14,3 +14,15 @@ Future<void> deleteProduct(String mainCategoryName, String subCategoryName, Stri
   showSuccessSnackbar('Data deleted sucessfully');
   Get.back();
 }
+
+
+Future<void> deleteSubCategory(String mainCategoryName, String subCategoryName) async {
+  await FirebaseFirestore.instance
+      .collection('MainCategories')
+      .doc(mainCategoryName)
+      .collection('subcategories')
+      .doc(subCategoryName)
+      .delete();
+  showSuccessSnackbar('Data deleted sucessfully');
+  Get.back();
+}

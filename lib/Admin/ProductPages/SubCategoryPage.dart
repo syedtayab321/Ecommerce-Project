@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/ProductPages/ProductDetailCard.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryAddition.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
-import 'package:ecommerce_app/widgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/ListTileWidget.dart';
+import 'package:ecommerce_app/widgets/Snakbar.dart';
 import 'package:ecommerce_app/widgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/TextWidget.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,8 @@ class SubCategoriesPage extends StatelessWidget {
 
   void SubCategoryAdd() async {
     await addSubCategory(Productname, _productnameController.text);
+    showSuccessSnackbar("Data saved sucessfully");
+    Get.back();
     _productnameController.clear();
   }
 

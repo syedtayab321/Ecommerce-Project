@@ -1,4 +1,6 @@
 import 'package:ecommerce_app/Admin/ProductPages/ProductDetailCard.dart';
+import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
+import 'package:ecommerce_app/widgets/DialogBox.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -94,6 +96,25 @@ class ListTileWidget extends StatelessWidget {
                 IconButton(
                   icon: Icon(icon, color: Colors.white),
                   onPressed: onIconPressed,
+                  splashRadius: 24.0,
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: (){
+                    Get.dialog(ConfirmDialog(
+                      title: 'Delete Category',
+                      content: 'Warning:All Data Inside this Category will be Deleted',
+                      confirmText: 'Delete',
+                      cancelText: 'Cancel',
+                      confirmColor: Colors.red,
+                      cancelColor: Colors.green,
+                      onConfirm: (){
+                        deleteSubCategory(this.MainCategory, this.title);
+                        Get.back();
+                      },
+                    ),
+                    );
+                  },
                   splashRadius: 24.0,
                 ),
               ],

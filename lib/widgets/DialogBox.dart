@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,7 +28,7 @@ class ConfirmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
-      content: Text(content),
+      content: TextWidget(title: content,color: confirmColor,size: 15,),
       actions: <Widget>[
         TextButton(
           child: Text(cancelText),

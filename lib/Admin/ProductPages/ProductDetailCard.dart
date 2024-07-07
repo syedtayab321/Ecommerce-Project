@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
-import 'package:ecommerce_app/FirebaseCruds/CategoryRetrival.dart';
 import 'package:ecommerce_app/widgets/DialogBox.dart';
 import 'package:ecommerce_app/widgets/ProductDialog.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
@@ -173,6 +172,7 @@ class ProductDetailsCard extends StatelessWidget {
                                     cancelColor: Colors.green,
                                     onConfirm: (){
                                       deleteProduct(MainCategory, SubCategory, ProductData['name']);
+                                      Get.back();
                                     },
                                     onCancel: ()=>Get.back(),
                                   ),

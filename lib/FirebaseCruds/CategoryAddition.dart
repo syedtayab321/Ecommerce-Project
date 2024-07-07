@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/widgets/Snakbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-Future<void> addMainCategory(String mainCategoryName) async {
+Future<void> addMainCategory(String mainCategoryName,String ImageUrl) async {
    try{
-     await FirebaseFirestore.instance.collection('MainCategories').doc(mainCategoryName).set({});
-     showSuccessSnackbar("Data saved sucessfully");
-     Get.back();
+     await FirebaseFirestore.instance.collection('MainCategories').doc(mainCategoryName).set({
+       'Image Url':ImageUrl,
+     });
    }
     on FirebaseAuthException catch(e){
        showErrorSnackbar(e.code.toString());
@@ -21,8 +20,6 @@ Future<void> addSubCategory(String mainCategoryName, String subCategoryName) asy
          .collection('subcategories')
          .doc(subCategoryName)
          .set({});
-     showSuccessSnackbar("Data saved sucessfully");
-     Get.back();
    }
    on FirebaseAuthException catch(e){
      showErrorSnackbar(e.code.toString());
@@ -39,8 +36,6 @@ Future<void> addProduct( String prodcutname,String mainCategoryName, String subC
          .collection('Products')
           .doc(prodcutname)
        .set(productData);
-     showSuccessSnackbar("Data saved sucessfully");
-     Get.back();
    }
    on FirebaseException catch (e) {
      showErrorSnackbar(e.code.toString());

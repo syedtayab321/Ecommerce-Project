@@ -1,4 +1,4 @@
-import 'package:ecommerce_app/Models/Authentication.dart';
+import 'package:ecommerce_app/Models/SharedPreferencesQuery.dart';
 import 'package:ecommerce_app/widgets/ElevatedButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

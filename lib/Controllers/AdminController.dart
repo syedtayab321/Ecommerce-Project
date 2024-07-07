@@ -13,8 +13,8 @@ class AdminController extends GetxController {
 
   final List<Widget> pages = [
     HomePage(),
-    AddtoCart(),
-    AddtoCart(),
+    AddToCartPage(),
+    AddToCartPage(),
     ProfilePage(),
   ];
 }
