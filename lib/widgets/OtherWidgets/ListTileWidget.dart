@@ -1,6 +1,6 @@
 import 'package:ecommerce_app/Admin/ProductPages/ProductDetailCard.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
-import 'package:ecommerce_app/widgets/DialogBox.dart';
+import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -67,7 +67,7 @@ class ListTileWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Image.asset(
+                    child: Image.network(
                       imageUrl,
                       width: 60.0,
                       height: 60.0,

@@ -1,7 +1,7 @@
 import 'package:ecommerce_app/UserLogin.dart';
-import 'package:ecommerce_app/widgets/ElevatedButton.dart';
-import 'package:ecommerce_app/widgets/Icon_Button.dart';
-import 'package:ecommerce_app/widgets/TextWidget.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

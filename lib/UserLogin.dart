@@ -1,13 +1,9 @@
-import 'package:ecommerce_app/Admin/Dashboard.dart';
-import 'package:ecommerce_app/Models/SharedPreferencesQuery.dart';
-import 'package:ecommerce_app/Models/AuthenticationModel.dart';
-import 'package:ecommerce_app/User/UserDashboard.dart';
-import 'package:ecommerce_app/widgets/ElevatedButton.dart';
-import 'package:ecommerce_app/widgets/Icon_Button.dart';
-import 'package:ecommerce_app/widgets/Snakbar.dart';
-import 'package:ecommerce_app/widgets/TextFormField.dart';
-import 'package:ecommerce_app/widgets/TextWidget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ecommerce_app/Controllers/LoginController.dart';
+import 'package:ecommerce_app/Controllers/PasswordController.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextFormField.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 class Userlogin extends StatefulWidget {
@@ -18,146 +14,128 @@ class Userlogin extends StatefulWidget {
 }
 
 class _UserloginState extends State<Userlogin> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final AuthService _authService=AuthService();
-
-  void Login() async{
-    User? user = await _authService.signIn(_emailController.text, _passwordController.text);
-    if (user != null) {
-       await _authService.saveUserToPreferences(user.uid);
-      String? uid = await _authService.getUserFromPreferences();
-      UserModel? userModel = await _authService.getUserRole(uid!);
-      if (userModel != null) {
-        if (userModel.role == 'Admin') {
-          Get.off(() => AdminDashboard(),
-              transition: Transition.fadeIn, duration: Duration(seconds: 2));
-          showSuccessSnackbar('Login Sucessfully');
-        } else if(userModel.role == 'User') {
-          Get.off(() => Userdashboard(),
-              transition: Transition.fadeIn, duration: Duration(seconds: 2));
-          showSuccessSnackbar('Login Sucessfully');
-        }
-      }
-    }
-    else
-      {
-      showErrorSnackbar('user is null');
-    }
-  }
+  final LoginController loginController = Get.put(LoginController());
+  final Password_controller _visibilityController=Get.put(Password_controller());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        Image(
-          image: AssetImage('assets/images/back.jpg'),
-          fit: BoxFit.cover,
-          width: Get.width,
-          height: Get.height,
-        ),
-        Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(16.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              elevation: 8.0,
-              child: Padding(
-                padding: EdgeInsets.all(24.0),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 20),
+              Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(height: 40),
                     TextWidget(
-                      title: "Let's sign you in",
-                      size: 24,
-                      weight: FontWeight.bold,
+                      title: 'Ecommerce',
+                        color: Colors.purple,
+                        size: 24,
+                        weight: FontWeight.bold,
+                        spacing: 5,
                     ),
-                    SizedBox(height: 8),
-                    TextWidget(
-                      title: "Welcome back,\nYou've been missed!",
-                      size: 18,
-                      color: Colors.grey[600],
-                    ),
-                    SizedBox(height: 32),
-                    ResuableTextField(
-                      type: TextInputType.text,
-                      label: "Email",
-                      prefixicon: Icon(
-                        Icons.email,
-                        color: Colors.black38,
-                      ),
-                      controller: _emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    ResuableTextField(
-                      type: TextInputType.text,
-                      label: "Password",
-                      value: true,
-                      prefixicon: Icon(Icons.password),
-                      suffixicon: Icon_Button(
-                        onPressed: () {},
-                        icon: Icon(Icons.remove_red_eye),
-                      ),
-                      controller: _passwordController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          // Handle "Forgot Password?"
-                        },
-                        child: TextWidget(
-                          title: "Forgot Password",
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Elevated_button(
-                        text: "log In",
-                        color: Colors.white,
-                        padding: 8.0,
-                        fontsize: 16,
-                        radius: 12,
-                        backcolor: Colors.black,
-                        path: Login,
-                        width: double.infinity,
-                        height: 60,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextWidget(
-                      title: "Welcome to Our App",
-                      color: Colors.grey,
-                    ),
-                    SizedBox(height: 16),
                   ],
                 ),
               ),
-            ),
+              SizedBox(height: 10),
+              Center(
+                child: Column(
+                  children: [
+                    TextWidget(
+                      title: 'Hello, Guest!',
+                        size: 24,
+                        weight: FontWeight.bold,
+
+                    ),
+                    SizedBox(height: 8),
+                    TextWidget(
+                      title: 'Welcome to Ecommerce',
+                        size: 18,
+                    ),
+                    SizedBox(height: 8),
+                    TextWidget(
+                      title: 'Before Continue, Please Sign in First.',
+                        size: 16,
+                        color: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+              Center(
+                child: Image.asset(
+                  'assets/images/login.png',
+                  height: 200,
+                ),
+              ),
+              SizedBox(height: 30),
+              ResuableTextField(
+                  type: TextInputType.text,
+                  label: 'E-mail',
+                  controller: loginController.emailController,
+              ),
+              SizedBox(height: 20),
+              Obx((){
+                return ResuableTextField(
+                    type: TextInputType.text,
+                    label: 'Password',
+                    controller: loginController.passwordController,
+                    value: _visibilityController.show.value,
+                    suffixicon: Icon_Button(
+                       onPressed: (){
+                         _visibilityController.show_password();
+                       },
+                      icon: _visibilityController.show.value==true?Icon(Icons.remove_red_eye_outlined):Icon(Icons.remove_red_eye),
+                    ),
+                );
+              }),
+              SizedBox(height: 10),
+              Row(
+                children: <Widget>[
+                  Checkbox(
+                    value: false,
+                    onChanged: (bool? value) {},
+                  ),
+                  Text('Remember Me'),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text('Forgot Password?'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Obx((){
+                 return loginController.isLoading.value?Center(child: CircularProgressIndicator()):
+                 Elevated_button(
+                   text: 'LOGIN',
+                   path: loginController.login,
+                   padding: 13,
+                   width: Get.width,
+                   height: 40,
+                   radius: 5,
+                   color: Colors.white,
+                   backcolor: Colors.purple,
+                   fontsize: 18,
+                 );
+              }),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  "Have A Nice Day",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
-    ));
+      ),
+    );
   }
 }

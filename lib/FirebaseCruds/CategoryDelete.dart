@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecommerce_app/widgets/Snakbar.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:get/get.dart';
 
 Future<void> deleteProduct(String mainCategoryName, String subCategoryName, String productId) async {

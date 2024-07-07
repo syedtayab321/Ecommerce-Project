@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
-import 'package:ecommerce_app/widgets/DialogBox.dart';
-import 'package:ecommerce_app/widgets/ProductDialog.dart';
-import 'package:ecommerce_app/widgets/ElevatedButton.dart';
-import 'package:ecommerce_app/widgets/TextWidget.dart';
+import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
+import 'package:ecommerce_app/widgets/DialogBoxes/ProductDialog.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -69,8 +69,7 @@ class ProductDetailsCard extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                var ProductData =
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                var ProductData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 return Card(
                   elevation: 4.0,
                   margin: EdgeInsets.all(12.0),

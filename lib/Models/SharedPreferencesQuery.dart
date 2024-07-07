@@ -1,7 +1,7 @@
 import 'package:ecommerce_app/Models/AuthenticationModel.dart';
 import 'package:ecommerce_app/UserLogin.dart';
 import 'package:ecommerce_app/splashscreen.dart';
-import 'package:ecommerce_app/widgets/Snakbar.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';

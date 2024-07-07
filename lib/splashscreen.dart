@@ -4,7 +4,7 @@ import 'package:ecommerce_app/Models/SharedPreferencesQuery.dart';
 import 'package:ecommerce_app/Models/AuthenticationModel.dart';
 import 'package:ecommerce_app/User/UserDashboard.dart';
 import 'package:ecommerce_app/welcome.dart';
-import 'package:ecommerce_app/widgets/Snakbar.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

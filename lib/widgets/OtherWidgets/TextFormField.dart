@@ -1,5 +1,5 @@
-import 'package:ecommerce_app/widgets/Icon_Button.dart';
-import 'package:ecommerce_app/widgets/TextWidget.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 
 class ResuableTextField extends StatelessWidget {

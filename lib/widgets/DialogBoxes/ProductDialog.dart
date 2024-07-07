@@ -1,7 +1,7 @@
 import 'package:ecommerce_app/Controllers/DateController.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryAddition.dart';
-import 'package:ecommerce_app/widgets/ElevatedButton.dart';
-import 'package:ecommerce_app/widgets/Snakbar.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

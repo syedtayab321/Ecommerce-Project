@@ -1,6 +1,6 @@
 import 'package:ecommerce_app/Models/SharedPreferencesQuery.dart';
-import 'package:ecommerce_app/widgets/DialogBox.dart';
-import 'package:ecommerce_app/widgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
