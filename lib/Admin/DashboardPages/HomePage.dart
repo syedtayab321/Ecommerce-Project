@@ -5,6 +5,7 @@ import 'package:ecommerce_app/widgets/DialogBoxes/AddCategoryDialogBox.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/SliderWidget.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
@@ -21,86 +22,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          leading: Icon(Icons.menu),
          backgroundColor: Colors.white,
          title: TextWidget(title: 'Home Page',),
          actions: [
            Icon_Button(icon: Icon(Icons.add_shopping_cart), onPressed: (){}),
          ],
       ),
-      drawer: Drawer(),
       body: Padding(
         padding: const EdgeInsets.only(top: 6.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 12.0),
-                      child: ResuableTextField(
-                        type: TextInputType.text,
-                        radius: 12,
-                        label: 'search',
-                        fillcolor: Colors.transparent,
-                        suffixicon: Icon_Button(
-                          icon: Icon(Icons.search),
-                          onPressed: () {},
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  width: double.infinity,
-                  height: 180,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.white,
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/back.jpg'), // Your banner image
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.5),
-                          Colors.transparent
-                        ],
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Make Life At Home Better',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'UP TO 70% OFF',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                child:AnimatedImageSlider(),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

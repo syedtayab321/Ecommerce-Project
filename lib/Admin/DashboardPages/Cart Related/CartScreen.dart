@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartDetailsCard.dart';
 
 class CartScreen extends StatelessWidget {
-  TextEditingController _usernameController = new TextEditingController();
   TextEditingController _cnicController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -39,10 +38,11 @@ class CartScreen extends StatelessWidget {
                     final doc = docs[index];
                     final data = doc.data() as Map<String, dynamic>;
                     return CartItemCard(
+                      Discount: data['Dicount on Items'],
+                      oldprice:data['Price Before Discount'],
                       itemName: data['Product Name'],
-                      itemPrice: data['Total Price'] / data['Selected quantity'],
+                      newprice: data['Price After Discount'],
                       selectedQuantity: data['Selected quantity'],
-                      totalPrice: data['Total Price'],
                     );
                   },
                 ),
@@ -56,14 +56,6 @@ class CartScreen extends StatelessWidget {
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: _usernameController,
-                            decoration: InputDecoration(
-                              labelText: 'Username',
-                              hintText: 'Enter your username',
-                            ),
-                          ),
                           SizedBox(height: 20),
                           TextFormField(
                             keyboardType: TextInputType.number,
@@ -96,8 +88,8 @@ class CartScreen extends StatelessWidget {
                             height: 30,
                             radius: 10,
                             path: () {
-                              if (_usernameController.text.isNotEmpty && _cnicController.text.isNotEmpty) {
-                                addBuyNow(_usernameController.text, _cnicController.text);
+                              if (_cnicController.text.isNotEmpty && _cnicController.text.length<11) {
+                                addBuyNow(_cnicController.text);
                               } else {
                                 showErrorSnackbar('Please fill all the fields');
                               }

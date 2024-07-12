@@ -105,7 +105,7 @@ class ProductDetailsCard extends StatelessWidget {
                                 ),
                                 SizedBox(height: 4.0),
                                 Text(
-                                 'Price:${price}',
+                                 'Price:\£${price}',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     color: Colors.green,

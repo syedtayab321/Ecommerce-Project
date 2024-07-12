@@ -1,4 +1,3 @@
-import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -13,7 +12,6 @@ class CartController extends GetxController {
   Future<void> deleteCartItem(String docId) async {
     try {
       FirebaseFirestore.instance.collection('Cart Data').doc(docId).delete();
-      showSuccessSnackbar(docId);
     } catch (e) {
       print('Error deleting item: $e');
     }

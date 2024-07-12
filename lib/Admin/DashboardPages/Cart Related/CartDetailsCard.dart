@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CartItemCard extends StatelessWidget {
-  final String itemName;
-  final double itemPrice;
+  final String itemName,Discount;
   final int selectedQuantity;
-  final double totalPrice;
+  final double oldprice,newprice;
   CartItemCard({
     required this.itemName,
-    required this.itemPrice,
+    required this.oldprice,
+    required this.newprice,
+    required this.Discount,
     required this.selectedQuantity,
-    required this.totalPrice,
   });
   final CartController cartController = Get.put(CartController());
   @override
@@ -37,14 +37,17 @@ class CartItemCard extends StatelessWidget {
               color: Colors.white,
             ),
             SizedBox(height: 10),
-            _buildDetailRow('Price Per Item:',
-                '\$${itemPrice.toStringAsFixed(2)}', Colors.white),
+            _buildDetailRow('Price Before Discount:',
+                '\£${oldprice.toStringAsFixed(2)}', Colors.white),
             SizedBox(height: 5),
             _buildDetailRow(
                 'Selected Quantity:', '$selectedQuantity', Colors.white),
             SizedBox(height: 5),
-            _buildDetailRow('Total Price:',
-                '\$${totalPrice.toStringAsFixed(2)}', Colors.white),
+            _buildDetailRow('Price After Discount:',
+                '\£${newprice.toStringAsFixed(2)}', Colors.white),
+            SizedBox(height: 10),
+            _buildDetailRow('Discount:',
+                '${Discount}\%', Colors.green),
             SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,

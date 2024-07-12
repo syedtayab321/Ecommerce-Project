@@ -56,20 +56,24 @@ Future<void> addProduct( String prodcutname,String mainCategoryName, String subC
    }
 }
 // add to cart query
-Future<void> addtoCart(String CategoryName,double price,int quantity,int remaningquantity,String MainCategory,String Productname) async {
+Future<void> addtoCart(String Discount,String CategoryName,double oldprice,double Discountprice,int quantity_buy,int remaningquantity,String MainCategory,String Productname) async {
         bool isSucessful=false;
-        CounterController _counterControlle=Get.put(CounterController());
   try{
             DocumentSnapshot data=await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).get();
             // checking if data in cart already ecists are not
             if(data.exists){
               int currentQuantity = data.get('Selected quantity').toInt();
-              double currentTotalPrice = data.get('Total Price').toDouble();
+              double currentTotalPrice = data.get('Price After Discount').toDouble();
+              double currentoldPrice = data.get('Price Before Discount').toDouble();
 
-              int newQuantity = currentQuantity + quantity;
-              double newTotalPrice = currentTotalPrice + price;
+              int newQuantity = currentQuantity + quantity_buy;
+              double newTotalPrice = currentTotalPrice + Discountprice;
+              double oldtotalprice=currentoldPrice + oldprice;
+
               await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).update({
-                'Total Price':newTotalPrice,
+                'Price Before Discount':oldtotalprice,
+                'Price After Discount':newTotalPrice,
+                'Dicount on Items':Discount,
                 'Selected quantity':newQuantity,
                 'Date':DateTime.now(),
               });
@@ -79,8 +83,10 @@ Future<void> addtoCart(String CategoryName,double price,int quantity,int remanin
               {
                 await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).set({
                   'Product Name':Productname,
-                  'Total Price':price,
-                  'Selected quantity':quantity,
+                  'Price Before Discount':oldprice,
+                  'Price After Discount':Discountprice,
+                  'Dicount on Items':Discount,
+                  'Selected quantity':quantity_buy,
                   'Date':DateTime.now(),
                 });
                 Get.back();
@@ -91,9 +97,6 @@ Future<void> addtoCart(String CategoryName,double price,int quantity,int remanin
         catch(e){
            isSucessful=false;
           showErrorSnackbar(e.toString());
-        }
-        finally{
-            Get.back();
         }
      if(isSucessful==true){
        await  FirebaseFirestore.instance

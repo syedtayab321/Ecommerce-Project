@@ -9,8 +9,8 @@ import 'package:get/get.dart';
 class QuantitySelector extends StatelessWidget {
   double priceperitem;
   int stock;
-  var totalprice,quantity_buy,remainingquantity;
-  String categoryName,MainCategory,ProductName;
+  var totalprice, quantity_buy, remainingquantity, discountedPrice;
+  String categoryName, MainCategory, ProductName;
   QuantitySelector({
     required this.priceperitem,
     required this.categoryName,
@@ -18,64 +18,100 @@ class QuantitySelector extends StatelessWidget {
     required this.MainCategory,
     required this.ProductName,
   });
-  CounterController _counterControlle=Get.put(CounterController());
+
+  final CounterController _counterController = Get.put(CounterController());
+  final TextEditingController _discountController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-         title: TextWidget(title: 'Select Quantity',size: 16,weight: FontWeight.bold,),
-         content:  Container(
-           padding: EdgeInsets.all(16.0),
-           decoration: BoxDecoration(
-             border: Border.all(color: Colors.grey),
-             borderRadius: BorderRadius.circular(10.0),
-           ),
-           child: SingleChildScrollView(
-             child: Column(
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                 Text(
-                   'Select Quantity & User',
-                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                 ),
-                 SizedBox(height: 16.0),
-                 Obx((){
-                   return Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       IconButton(
-                         icon: Icon(Icons.remove),
-                         onPressed: _counterControlle.decrementQuantity,
-                       ),
-                       Text(
-                         '${_counterControlle.quantity}',
-                         style: TextStyle(fontSize: 20.0),
-                       ),
-                       IconButton(
-                         icon: Icon(Icons.add),
-                         onPressed: _counterControlle.incrementQuantity,
-                       ),
-                     ],
-                   );
-                 }),
-                 SizedBox(height: 16.0),
-                 Obx((){
-                  totalprice= _counterControlle.quantity * priceperitem;
-                  int selected_quantity=int.parse(_counterControlle.quantity.toString());
-                  quantity_buy=selected_quantity;
-                  remainingquantity=stock-selected_quantity ;
-                   return Text(
-                     'Total Price: \$${totalprice}',
-                     style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                   );
-                 })
-               ],
-             ),
-           ),
-         ),
+      title: TextWidget(
+        title: 'Select Quantity',
+        size: 16,
+        weight: FontWeight.bold,
+      ),
+      content: Obx(() {
+        return _counterController.isLoading.value
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Select Quantity & User',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16.0),
+                Obx(() {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.remove),
+                        onPressed: _counterController.decrementQuantity,
+                      ),
+                      Text(
+                        '${_counterController.quantity}',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: _counterController.incrementQuantity,
+                      ),
+                    ],
+                  );
+                }),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _discountController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Enter Discount (%)',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    _counterController.updateDiscount(value);
+                  },
+                ),
+                SizedBox(height: 16.0),
+                Obx(() {
+                  totalprice = _counterController.quantity.value * priceperitem;
+                  int selected_quantity = _counterController.quantity.value;
+                  quantity_buy = selected_quantity;
+                  remainingquantity = stock - selected_quantity;
+
+                  discountedPrice = totalprice - (totalprice * (_counterController.discount.value / 100));
+                  return Column(
+                    children: [
+                      Text(
+                        'Total Price: \£${totalprice.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Discounted Price: \£${discountedPrice.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  );
+                })
+              ],
+            ),
+          ),
+        );
+      }),
       actions: <Widget>[
         TextButton(
-          child: TextWidget(title: 'Cancel',),
-          onPressed:(){
+          child: TextWidget(title: 'Cancel'),
+          onPressed: () {
             Get.back();
           },
           style: TextButton.styleFrom(
@@ -85,21 +121,30 @@ class QuantitySelector extends StatelessWidget {
         Elevated_button(
           text: 'Add to CART',
           color: Colors.white,
-          path: (){
-            addtoCart(
-                this.categoryName,
-                totalprice,quantity_buy,
-                remainingquantity,
-                this.MainCategory,
-                this.ProductName
-            );
-             showSuccessSnackbar('product added to cart sucessfully');
-             Get.back();
+          path: () async {
+            _counterController.setLoading(true);
+            await addtoCart(
+              _discountController.text,
+              this.categoryName,
+              this.totalprice,
+              this.discountedPrice,
+              this.quantity_buy,
+              this.remainingquantity,
+              this.MainCategory,
+              this.ProductName,
+            ).then((value) {
+              showSuccessSnackbar('Product added to cart successfully');
+              Get.back();
+            }).catchError((error) {
+              showErrorSnackbar('Failed to add product to cart: $error');
+            }).whenComplete(() {
+              _counterController.setLoading(false);
+            });
           },
           radius: 10,
           width: 130,
           height: 20,
-          backcolor:Colors.black,
+          backcolor: Colors.black,
           padding: 10,
         ),
       ],
