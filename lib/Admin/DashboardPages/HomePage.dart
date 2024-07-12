@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/ProductPages/SubCategoryPage.dart';
+import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/AddCategoryDialogBox.dart';
+import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextFormField.dart';
@@ -19,15 +21,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        title: Image(
-          image: AssetImage('assets/images/logo.png'),
-          width: 200,
-          height: 100,
-        ),
+         backgroundColor: Colors.white,
+         title: TextWidget(title: 'Home Page',),
+         actions: [
+           Icon_Button(icon: Icon(Icons.add_shopping_cart), onPressed: (){}),
+         ],
       ),
+      drawer: Drawer(),
       body: Padding(
         padding: const EdgeInsets.only(top: 6.0),
         child: SingleChildScrollView(
@@ -63,8 +63,7 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.white,
                     image: DecorationImage(
-                      image: AssetImage(
-                          'assets/images/back.jpg'), // Your banner image
+                      image: AssetImage('assets/images/back.jpg'), // Your banner image
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -126,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                       padding: 10,
                       width: 200,
                       height: 20,
-                      backcolor: Colors.green,
+                      backcolor: Colors.black,
                     ),
                   ),
                 ],
@@ -177,32 +176,67 @@ class CategoryData extends StatelessWidget {
                      onTap: () {
                        Get.to(SubCategoriesPage(Productname: category.id));
                      },
-                     child: InteractiveViewer(
-                       child: Card(
-                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                         child: Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             Container(
-                               height: 120,
-                               decoration: BoxDecoration(
+                     child: Card(
+                       elevation: 4,
+                       shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.circular(15),
+                       ),
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Stack(
+                             children: [
+                               ClipRRect(
                                  borderRadius: BorderRadius.only(
                                    topLeft: Radius.circular(15),
                                    topRight: Radius.circular(15),
                                  ),
+                                 child: Image.network(
+                                   ImageData['Image Url']!,
+                                   fit: BoxFit.cover,
+                                   height: 150,
+                                   width: double.infinity,
+                                 ),
                                ),
-                               child: Image.network(ImageData['Image Url'],fit: BoxFit.cover,),
-                             ),
-                             Padding(
-                               padding: const EdgeInsets.all(8.0),
-                               child: TextWidget(
-                                 title: category.id,
-                                 size: 20,
-                                 spacing: 3,
+                               Positioned(
+                                 top: 8,
+                                 right: 8,
+                                 child: IconButton(
+                                   icon: Icon(
+                                     Icons.delete,
+                                     color: Colors.red,
+                                   ),
+                                   onPressed: () {
+                                     Get.dialog(ConfirmDialog(
+                                             title: 'Delete',
+                                             content: 'Are You Sure ?',
+                                             confirmText:'Delete',
+                                             cancelText: 'Cancel',
+                                             onConfirm: (){
+                                               deleteCategory(category.id);
+                                               Get.back();
+                                             },
+                                             onCancel: (){
+                                               Get.back();
+                                             },
+                                           ),);
+                                     },
+                                 ),
+                               ),
+                             ],
+                           ),
+                           Padding(
+                             padding: const EdgeInsets.all(8.0),
+                             child: Text(
+                               category.id,
+                               style: TextStyle(
+                                 fontSize: 20,
+                                 fontWeight: FontWeight.bold,
+                                 color: Colors.black87,
                                ),
                              ),
-                           ],
-                         ),
+                           ),
+                         ],
                        ),
                      ),
                    );

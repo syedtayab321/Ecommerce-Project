@@ -16,16 +16,18 @@ class AdminDashboard extends StatelessWidget {
         return ConvexAppBar(
           backgroundColor: Colors.white,
           color: Colors.black54,
-          activeColor: Colors.green,
+          activeColor: Colors.black,
           style: TabStyle.reactCircle,
           items: [
             TabItem(icon: Icons.store, title: 'Shop'),
-            TabItem(icon: Icons.category, title: 'Category'),
+            TabItem(icon: Icons.account_balance_wallet, title: 'Sales'),
             TabItem(icon: Icons.shopping_cart, title: 'Cart'),
             TabItem(icon: Icons.person, title: 'Profile'),
           ],
           initialActiveIndex: _controller.selectedIndex.value,
           onTap: _controller.onItemTapped,
+          height: 50,
+          curveSize: 20,
         );
       }),
     );

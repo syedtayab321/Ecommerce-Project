@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/Admin/ProductPages/AddtoCartQuery.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/ProductDialog.dart';
@@ -8,18 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProductDetailsCard extends StatelessWidget {
-  final String imageUrl;
   final String MainCategory, SubCategory;
-  final double price;
-  final int stock;
 
-  const ProductDetailsCard({
+  ProductDetailsCard({
     Key? key,
-    required this.imageUrl,
     required this.MainCategory,
     required this.SubCategory,
-    required this.price,
-    required this.stock,
   }) : super(key: key);
 
   @override
@@ -27,7 +22,7 @@ class ProductDetailsCard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: TextWidget(
-          title: 'Categories',
+          title: SubCategory,
         ),
         actions: [
           Padding(
@@ -41,11 +36,11 @@ class ProductDetailsCard extends StatelessWidget {
               },
               color: Colors.white,
               text: 'Add',
-              radius: 10,
+              radius: 7,
               padding: 10,
-              width: 100,
+              width: 150,
               height: 20,
-              backcolor: Colors.green,
+              backcolor: Colors.black,
             ),
           ),
         ],
@@ -70,7 +65,10 @@ class ProductDetailsCard extends StatelessWidget {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var ProductData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                 int stock=int.parse(ProductData['Stock'].toString());
+                 double price=double.parse(ProductData['Price']);
                 return Card(
+                  color: Colors.black,
                   elevation: 4.0,
                   margin: EdgeInsets.all(12.0),
                   shape: RoundedRectangleBorder(
@@ -85,8 +83,8 @@ class ProductDetailsCard extends StatelessWidget {
                           ClipRRect(
                             borderRadius: BorderRadius.vertical(
                                 top: Radius.circular(15.0)),
-                            child: Image.asset(
-                              imageUrl,
+                            child: Image.network(
+                              ProductData['Image Url'],
                               fit: BoxFit.cover,
                               height: 150.0,
                               width: double.infinity,
@@ -102,12 +100,12 @@ class ProductDetailsCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 SizedBox(height: 4.0),
                                 Text(
-                                  'Price:${ProductData['Price']}',
+                                 'Price:${price}',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     color: Colors.green,
@@ -116,11 +114,11 @@ class ProductDetailsCard extends StatelessWidget {
                                 ),
                                 SizedBox(height: 4.0),
                                 Text(
-                                  'Stock:${ProductData['Stock']}',
+                                  stock <= 0 ? 'Out of Stock':  'Stock:${stock}',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     color:
-                                        stock > 0 ? Colors.black : Colors.red,
+                                      stock  > 0 ? Colors.white : Colors.red,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -132,7 +130,7 @@ class ProductDetailsCard extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                TextWidget(title: 'Expiray Date'),
+                                TextWidget(title: 'Expiray Date',color: Colors.white,),
                                 TextWidget(title: '${ProductData['ExpiryDate']}',color: Colors.red,)
                               ],
                             ),
@@ -151,7 +149,18 @@ class ProductDetailsCard extends StatelessWidget {
                                 backcolor: Colors.white,
                               ),
                               Elevated_button(
-                                path: () {},
+                                path: () {
+                                  stock <= 0 ?
+                                  Get.snackbar('Out of stock','Items are out of stock',backgroundColor: Colors.red,colorText: Colors.white):
+                                  Get.dialog(
+                                      QuantitySelector(
+                                        priceperitem: price,
+                                        categoryName: SubCategory,
+                                        stock: stock,
+                                        MainCategory:MainCategory,
+                                        ProductName: ProductData['name'],
+                                      ));
+                                },
                                 color: Colors.white,
                                 text: 'Add to cart',
                                 radius: 10,
@@ -173,7 +182,7 @@ class ProductDetailsCard extends StatelessWidget {
                                       deleteProduct(MainCategory, SubCategory, ProductData['name']);
                                       Get.back();
                                     },
-                                    onCancel: ()=>Get.back(),
+                                    onCancel: (){Get.back();},
                                   ),
                                   );
 

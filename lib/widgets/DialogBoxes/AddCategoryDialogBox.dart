@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:ecommerce_app/Controllers/ImageController.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryAddition.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
@@ -23,14 +22,22 @@ class Addcategorydialogbox extends StatelessWidget {
           .child(_nameController.text)
           .putFile(_imageController.imagedata.value!);
       String imageUrl = await uploadTask.ref.getDownloadURL();
-      await addMainCategory(_nameController.text, imageUrl);
+      if(imageUrl!=''){
+        await addMainCategory(_nameController.text, imageUrl);
+      }
+      else{
+        showErrorSnackbar('please select an image');
+      }
       showSuccessSnackbar("Category Added Successfully");
       _nameController.clear();
-      Get.back(); // Dismiss the dialog box
+      imageUrl=='';
+      Get.back();
     } catch (e) {
       showErrorSnackbar("Error adding category");
     } finally {
       isLoading.value = false;
+      _imageController.imagedata.value==null;
+      Get.back();
     }
   }
 
@@ -40,7 +47,7 @@ class Addcategorydialogbox extends StatelessWidget {
       titleStyle: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
-        color: Colors.deepPurple,
+        color: Colors.black,
       ),
       content: Column(
         children: [
@@ -51,7 +58,7 @@ class Addcategorydialogbox extends StatelessWidget {
               children: [
                 Obx(() {
                   return InkWell(
-                    onTap: () async {
+                    onTap: () {
                       _imageController.pickImage();
                     },
                     child: CircleAvatar(
@@ -79,13 +86,13 @@ class Addcategorydialogbox extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Elevated_button(
-                  color: Colors.white,
+                  color: Colors.black,
                   text: 'Cancel',
                   radius: 10,
                   padding: 10,
                   width: 100,
                   height: 40,
-                  backcolor: Colors.red.shade800,
+                  backcolor: Colors.white,
                   path: () {
                     Get.back();
                     _nameController.clear();
@@ -98,7 +105,7 @@ class Addcategorydialogbox extends StatelessWidget {
                   padding: 10,
                   width: 100,
                   height: 40,
-                  backcolor: Colors.green,
+                  backcolor: Colors.black,
                   path: () {
                     CategoryAdd();
                   },

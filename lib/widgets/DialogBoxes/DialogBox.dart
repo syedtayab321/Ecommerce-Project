@@ -20,15 +20,15 @@ class ConfirmDialog extends StatelessWidget {
     required this.cancelText,
     this.onConfirm,
     this.onCancel,
-    this.confirmColor = Colors.green,
-    this.cancelColor = Colors.red,
+    this.confirmColor = Colors.black,
+    this.cancelColor = Colors.redAccent,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title),
-      content: TextWidget(title: content,color: confirmColor,size: 15,),
+      title:TextWidget(title: title,color: confirmColor,size: 15,) ,
+      content: TextWidget(title: title,color: confirmColor,size: 15,),
       actions: <Widget>[
         TextButton(
           child: Text(cancelText),

@@ -27,11 +27,9 @@ class ListTileWidget extends StatelessWidget {
       onTap: (){
         Get.to(
           ProductDetailsCard(
-              imageUrl: 'assets/images/logo.png',
               MainCategory: this.MainCategory,
               SubCategory: this.title,
-              price: 65,
-              stock: 100),
+          ),
         );
       },
       child: Card(

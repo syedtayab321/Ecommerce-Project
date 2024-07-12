@@ -16,15 +16,32 @@ class SubCategoriesPage extends StatelessWidget {
   TextEditingController _productnameController = new TextEditingController();
   ImagePickerController _imageController=Get.put(ImagePickerController());
   SubCategoriesPage({required this.Productname});
+  final RxBool isLoading = false.obs;
 
   void SubCategoryAdd() async {
-    TaskSnapshot uploadTask=  await FirebaseStorage.instance.ref().child('Sub Category Images').child(_productnameController.text).putFile(_imageController.imagedata.value!);
-    String ImageUrl=await uploadTask.ref.getDownloadURL();
+    isLoading.value = true;
+    try{
+      TaskSnapshot uploadTask=  await FirebaseStorage.instance.ref().child('Sub Category Images').child(_productnameController.text).putFile(_imageController.imagedata.value!);
+      String ImageUrl=await uploadTask.ref.getDownloadURL();
 
-    await addSubCategory(Productname, _productnameController.text,ImageUrl);
-    showSuccessSnackbar("Data saved sucessfully");
-    Get.back();
-    _productnameController.clear();
+      if(ImageUrl!=''){
+        await addSubCategory(Productname, _productnameController.text,ImageUrl);
+        showSuccessSnackbar("Data saved sucessfully");
+        ImageUrl='';
+        Get.back();
+        _productnameController.clear();
+      }
+      else
+      {
+        showErrorSnackbar('Please Select an Image');
+      }
+    }
+    catch(e){
+      showErrorSnackbar(e.toString());
+    }
+    finally{
+      isLoading.value=false;
+    }
   }
 
   void DialogBox() {
@@ -33,7 +50,7 @@ class SubCategoriesPage extends StatelessWidget {
       titleStyle: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
-        color: Colors.deepPurple,
+        color: Colors.black,
       ),
       content: Column(
         children: [
@@ -54,7 +71,7 @@ class SubCategoriesPage extends StatelessWidget {
                     ),
                   );
                 }),
-                TextWidget(title: 'Pick SubCategory Image',size: 15,),
+                TextWidget(title: 'Pick SubCategory Image',size: 15,color: Colors.black,),
               ],
             ),
           ),
@@ -64,35 +81,38 @@ class SubCategoriesPage extends StatelessWidget {
             controller: _productnameController,
           ),
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Elevated_button(
-                color: Colors.white,
-                text: 'Cancel',
-                radius: 10,
-                padding: 10,
-                width: 100,
-                height: 40,
-                backcolor: Colors.red.shade800,
-                path: () {
-                  Get.back();
-                },
-              ),
-              Elevated_button(
-                color: Colors.white,
-                text: 'Add',
-                radius: 10,
-                padding: 10,
-                width: 100,
-                height: 40,
-                backcolor: Colors.green,
-                path: () {
-                  SubCategoryAdd();
-                },
-              ),
-            ],
-          ),
+           Obx((){
+              return isLoading.value?CircularProgressIndicator():
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Elevated_button(
+                    color: Colors.black,
+                    text: 'Cancel',
+                    radius: 10,
+                    padding: 10,
+                    width: 100,
+                    height: 40,
+                    backcolor: Colors.white,
+                    path: () {
+                      Get.back();
+                    },
+                  ),
+                  Elevated_button(
+                    color: Colors.white,
+                    text: 'Add',
+                    radius: 10,
+                    padding: 10,
+                    width: 100,
+                    height: 40,
+                    backcolor: Colors.black,
+                    path: () {
+                      SubCategoryAdd();
+                    },
+                  ),
+                ],
+              );
+           }),
         ],
       ),
       radius: 15,
@@ -107,7 +127,7 @@ class SubCategoriesPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: TextWidget(
-          title: '${this.Productname} Categories',
+          title: '${this.Productname}',
         ),
         actions: [
           Padding(
@@ -122,7 +142,7 @@ class SubCategoriesPage extends StatelessWidget {
               padding: 10,
               width: 100,
               height: 20,
-              backcolor: Colors.green,
+              backcolor: Colors.black,
             ),
           ),
         ],
@@ -152,11 +172,8 @@ class SubCategoriesPage extends StatelessWidget {
                      onIconPressed: () {
                        Get.to(
                          ProductDetailsCard(
-                             imageUrl: 'assets/images/logo.png',
                              MainCategory: this.Productname,
                              SubCategory: category.id,
-                             price: 65,
-                             stock: 100
                          ),
                        );
                      },

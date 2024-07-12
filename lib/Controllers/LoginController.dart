@@ -15,25 +15,33 @@ class LoginController extends GetxController {
   final AuthService authService = AuthService();
 
   Future<void> login() async {
-    isLoading.value = true;
-    User? user = await authService.signIn(emailController.text, passwordController.text);
-    if (user != null) {
-      await authService.saveUserToPreferences(user.uid);
-      String? uid = await authService.getUserFromPreferences();
-      UserModel? userModel = await authService.getUserRole(uid!);
-      if (userModel != null) {
-        isLoading.value = false;
-        if (userModel.role == 'Admin') {
-          Get.off(() => AdminDashboard(), transition: Transition.fadeIn, duration: Duration(seconds: 2));
-          showSuccessSnackbar('Login Successfully');
-        } else if (userModel.role == 'User') {
-          Get.off(() => Userdashboard(), transition: Transition.fadeIn, duration: Duration(seconds: 2));
-          showSuccessSnackbar('Login Successfully');
+     isLoading.value=false;
+    if(emailController.text!='' && passwordController.text!='')
+      {
+        isLoading.value = true;
+        User? user = await authService.signIn(emailController.text, passwordController.text);
+        if (user != null) {
+          await authService.saveUserToPreferences(user.uid);
+          String? uid = await authService.getUserFromPreferences();
+          UserModel? userModel = await authService.getUserRole(uid!);
+          if (userModel != null) {
+            isLoading.value = false;
+            if (userModel.role == 'Admin') {
+              Get.off(() => AdminDashboard(), transition: Transition.fadeIn, duration: Duration(seconds: 2));
+              showSuccessSnackbar('Login Successfully');
+            } else if (userModel.role == 'User') {
+              Get.off(() => Userdashboard(), transition: Transition.fadeIn, duration: Duration(seconds: 2));
+              showSuccessSnackbar('Login Successfully');
+            }
+          }
+        } else {
+          isLoading.value = false;
+          showErrorSnackbar('User is null');
         }
       }
-    } else {
+    else{
       isLoading.value = false;
-      showErrorSnackbar('User is null');
+      showErrorSnackbar('Please Fill all the fields first');
     }
   }
 }
