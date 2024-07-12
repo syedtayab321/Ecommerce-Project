@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/InvoiceScreen.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,7 +40,7 @@ class PersonGridView extends StatelessWidget {
                 DocumentSnapshot category = snapshot.data!.docs[index];
                 return GestureDetector(
                   onTap: () {
-                    Get.snackbar('User Clicked', 'CNIC:${53}');
+                    Get.to(InvoiceScreen(UserCnic: category.id));
                   },
                   child: Container(
                     decoration: BoxDecoration(
