@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/Controllers/LoginController.dart';
 import 'package:ecommerce_app/Controllers/PasswordController.dart';
+import 'package:ecommerce_app/forgotpassword.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextFormField.dart';
@@ -102,7 +103,9 @@ class _UserloginState extends State<Userlogin> {
                   Text('Remember Me'),
                   Spacer(),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(ForgotPasswordPage());
+                    },
                     child: Text('Forgot Password?'),
                   ),
                 ],
