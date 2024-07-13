@@ -14,6 +14,7 @@ class PersonGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: TextWidget(
           title: 'Sales',
         ),

@@ -13,6 +13,7 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cart'),
+        automaticallyImplyLeading: false,
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -25,7 +26,7 @@ class CartScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
-          if (snapshot.hasData || snapshot.data==null) {
+          if (!snapshot.hasData || snapshot.data==null) {
             return Center(child: Text('No Data Available'));
           }
           final docs = snapshot.data!.docs;

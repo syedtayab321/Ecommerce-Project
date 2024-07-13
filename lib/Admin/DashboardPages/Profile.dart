@@ -1,6 +1,7 @@
 import 'package:ecommerce_app/Models/SharedPreferencesQuery.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -28,6 +29,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Profile'),
       ),
       body: Container(
@@ -35,32 +37,25 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'John Doe',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+            TextWidget(
+              title: 'BrandWay Food Ltd',
+                size: 28,
+                weight: FontWeight.bold,
                 color: Colors.blueAccent,
-              ),
             ),
             SizedBox(height: 10),
-            Text(
-              'john.doe@example.com',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[700],
-                fontStyle: FontStyle.italic,
-              ),
+            TextWidget(
+              title: 'admin321@example.com',
+              size: 18,
+              color: Colors.grey[700],
             ),
             SizedBox(height: 30),
             Divider(height: 20, thickness: 2),
-            Text(
-              'Company Information',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+            TextWidget(
+              title: 'Company Information',
+              size: 22,
+                weight: FontWeight.bold,
                 color: Colors.blueAccent,
-              ),
             ),
             SizedBox(height: 10),
             Row(
@@ -68,10 +63,9 @@ class ProfilePage extends StatelessWidget {
                 Icon(Icons.store, color: Colors.blueAccent),
                 SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    'UPR Bus Hub is an e-commerce store providing a variety of products ranging from electronics to home decor. Our mission is to offer high-quality products at competitive prices.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[800]),
-                  ),
+                  child: TextWidget(
+                    title: 'Brand Way Food is an e-commerce store providing a variety of products ranging from electronics to home decor. Our mission is to offer high-quality products at competitive prices.',
+                    size: 18, color: Colors.grey[800]),
                 ),
               ],
             ),
@@ -81,9 +75,9 @@ class ProfilePage extends StatelessWidget {
                 Icon(Icons.local_shipping, color: Colors.blueAccent),
                 SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    'We offer reliable and fast shipping services to ensure your products reach you on time.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[800]),
+                  child: TextWidget(
+                    title: 'We offer reliable and fast shipping services to ensure your products reach you on time.',
+                    size: 18, color: Colors.grey[800]
                   ),
                 ),
               ],
@@ -94,9 +88,9 @@ class ProfilePage extends StatelessWidget {
                 Icon(Icons.support, color: Colors.blueAccent),
                 SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    'Our customer support is available 24/7 to assist you with any queries or issues.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[800]),
+                  child: TextWidget(
+                    title: 'Our customer support is available 24/7 to assist you with any queries or issues.',
+                    size: 18, color: Colors.grey[800]
                   ),
                 ),
               ],
