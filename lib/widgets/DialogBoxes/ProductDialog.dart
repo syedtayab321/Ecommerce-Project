@@ -45,7 +45,7 @@ class _ProductDialogState extends State<ProductDialog> {
       try {
         TaskSnapshot uploadTask = await FirebaseStorage.instance
             .ref()
-            .child('Main Category Images')
+            .child('Product Category Images')
             .child(_nameController.text)
             .putFile(_imageController.imagedata.value!);
         String imageUrl = await uploadTask.ref.getDownloadURL();

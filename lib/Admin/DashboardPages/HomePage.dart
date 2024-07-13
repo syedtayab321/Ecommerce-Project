@@ -7,7 +7,6 @@ import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Icon_Button.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/SliderWidget.dart';
-import 'package:ecommerce_app/widgets/OtherWidgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -102,7 +101,7 @@ class CategoryData extends StatelessWidget {
                  physics: NeverScrollableScrollPhysics(),
                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                    crossAxisCount: 2,
-                   childAspectRatio: Get.width / (Get.height / 1.8),
+                   childAspectRatio: Get.width / (Get.height / 1.5),
                    crossAxisSpacing: 16,
                    mainAxisSpacing: 16,
                  ),

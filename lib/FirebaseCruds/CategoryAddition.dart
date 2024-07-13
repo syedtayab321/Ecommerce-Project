@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecommerce_app/Controllers/AddToCartController.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -17,16 +16,14 @@ Future<void> addMainCategory(String mainCategoryName,String ImageUrl) async {
     }
 }
 //add to sub category query
-Future<void> addSubCategory(String mainCategoryName, String subCategoryName,String ImageUrl) async {
+Future<void> addSubCategory(String mainCategoryName, String subCategoryName) async {
    try{
      await FirebaseFirestore.instance
          .collection('MainCategories')
          .doc(mainCategoryName)
          .collection('subcategories')
          .doc(subCategoryName)
-         .set({
-         'Image Url':ImageUrl,
-     });
+         .set({});
    }
    on FirebaseAuthException catch(e){
      showErrorSnackbar(e.code.toString());

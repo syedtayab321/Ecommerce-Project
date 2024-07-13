@@ -7,40 +7,29 @@ import 'package:ecommerce_app/widgets/OtherWidgets/ListTileWidget.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextFormField.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SubCategoriesPage extends StatelessWidget {
   final String Productname;
   TextEditingController _productnameController = new TextEditingController();
-  ImagePickerController _imageController=Get.put(ImagePickerController());
+  ImagePickerController _imageController = Get.put(ImagePickerController());
   SubCategoriesPage({required this.Productname});
   final RxBool isLoading = false.obs;
 
+  final SearchController searchController = Get.put(SearchController());
+
   void SubCategoryAdd() async {
     isLoading.value = true;
-    try{
-      TaskSnapshot uploadTask=  await FirebaseStorage.instance.ref().child('Sub Category Images').child(_productnameController.text).putFile(_imageController.imagedata.value!);
-      String ImageUrl=await uploadTask.ref.getDownloadURL();
-
-      if(ImageUrl!=''){
-        await addSubCategory(Productname, _productnameController.text,ImageUrl);
-        showSuccessSnackbar("Data saved sucessfully");
-        ImageUrl='';
-        Get.back();
-        _productnameController.clear();
-      }
-      else
-      {
-        showErrorSnackbar('Please Select an Image');
-      }
-    }
-    catch(e){
+    try {
+      await addSubCategory(Productname, _productnameController.text);
+      showSuccessSnackbar("Data saved successfully");
+      Get.back();
+      _productnameController.clear();
+    } catch (e) {
       showErrorSnackbar(e.toString());
-    }
-    finally{
-      isLoading.value=false;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -54,65 +43,45 @@ class SubCategoriesPage extends StatelessWidget {
       ),
       content: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0,bottom: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Obx((){
-                  return  InkWell(
-                    onTap: ()async{
-                      _imageController.pickImage();
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: _imageController.imagedata.value!=null?
-                      FileImage(_imageController.imagedata.value!):null,
-                      radius: 50,
-                    ),
-                  );
-                }),
-                TextWidget(title: 'Pick SubCategory Image',size: 15,color: Colors.black,),
-              ],
-            ),
-          ),
           ResuableTextField(
             type: TextInputType.text,
             label: 'Category Name',
             controller: _productnameController,
           ),
           SizedBox(height: 20),
-           Obx((){
-              return isLoading.value?CircularProgressIndicator():
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Elevated_button(
-                    color: Colors.black,
-                    text: 'Cancel',
-                    radius: 10,
-                    padding: 10,
-                    width: 100,
-                    height: 40,
-                    backcolor: Colors.white,
-                    path: () {
-                      Get.back();
-                    },
-                  ),
-                  Elevated_button(
-                    color: Colors.white,
-                    text: 'Add',
-                    radius: 10,
-                    padding: 10,
-                    width: 100,
-                    height: 40,
-                    backcolor: Colors.black,
-                    path: () {
-                      SubCategoryAdd();
-                    },
-                  ),
-                ],
-              );
-           }),
+          Obx(() {
+            return isLoading.value
+                ? CircularProgressIndicator()
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Elevated_button(
+                        color: Colors.black,
+                        text: 'Cancel',
+                        radius: 10,
+                        padding: 10,
+                        width: 100,
+                        height: 40,
+                        backcolor: Colors.white,
+                        path: () {
+                          Get.back();
+                        },
+                      ),
+                      Elevated_button(
+                        color: Colors.white,
+                        text: 'Add',
+                        radius: 10,
+                        padding: 10,
+                        width: 100,
+                        height: 40,
+                        backcolor: Colors.black,
+                        path: () {
+                          SubCategoryAdd();
+                        },
+                      ),
+                    ],
+                  );
+          }),
         ],
       ),
       radius: 15,
@@ -146,44 +115,95 @@ class SubCategoriesPage extends StatelessWidget {
             ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Enter Name to Search',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+              ),
+              onChanged: (value) {
+                searchController.updateQuery(value);
+              },
+            ),
+          ),
+        ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-         stream: FirebaseFirestore.instance.collection('MainCategories').doc(this.Productname).collection('subcategories').snapshots(),
-         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-           if (snapshot.connectionState == ConnectionState.waiting) {
-             return Center(child: CircularProgressIndicator());
-           } else if (snapshot.hasError) {
-             return Center(child: Text('Error: ${snapshot.error}'));
-           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-             return Center(child: Text('No data found'));
-           } else {
-             return Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: ListView.builder(
-                 itemCount: snapshot.data!.docs.length,
-                 itemBuilder: (context, index) {
-                   DocumentSnapshot category = snapshot.data!.docs[index];
-                   var ProductData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                   return ListTileWidget(
-                     title: category.id,
-                     imageUrl: ProductData['Image Url']==''?"no image":ProductData['Image Url'],
-                     icon: Icons.arrow_forward_ios_sharp,
-                     MainCategory: this.Productname,
-                     onIconPressed: () {
-                       Get.to(
-                         ProductDetailsCard(
-                             MainCategory: this.Productname,
-                             SubCategory: category.id,
-                         ),
-                       );
-                     },
-                   );
-                 },
-               ),
-             );
-           }
-         }
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('MainCategories')
+                  .doc(this.Productname)
+                  .collection('subcategories')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No data found'));
+                } else {
+                  final allSubCategories = snapshot.data!.docs;
+                  return Obx(() {
+                    final filteredSubCategories =
+                        allSubCategories.where((category) {
+                      final categoryName = category.id.toLowerCase();
+                      final query = searchController.query.value.toLowerCase();
+                      return categoryName.contains(query);
+                    }).toList();
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        itemCount: filteredSubCategories.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot category =
+                              filteredSubCategories[index];
+                          return ListTileWidget(
+                            title: category.id,
+                            leadicon: Icons.person,
+                            icon: Icons.arrow_forward_ios_sharp,
+                            MainCategory: this.Productname,
+                            onIconPressed: () {
+                              Get.to(
+                                ProductDetailsCard(
+                                  MainCategory: this.Productname,
+                                  SubCategory: category.id,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  });
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
+  }
+}
+
+class SearchController extends GetxController {
+  var query = ''.obs;
+
+  void updateQuery(String newQuery) {
+    query.value = newQuery;
   }
 }

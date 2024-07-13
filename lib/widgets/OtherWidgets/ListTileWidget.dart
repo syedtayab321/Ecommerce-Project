@@ -1,18 +1,19 @@
 import 'package:ecommerce_app/Admin/ProductPages/ProductDetailCard.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ListTileWidget extends StatelessWidget {
-  final String imageUrl;
   final String title,MainCategory;
-  final IconData icon;
+  final IconData icon,leadicon;
   final VoidCallback onIconPressed;
 
   const ListTileWidget({
     Key? key,
-    required this.imageUrl,
+    required this.leadicon,
     required this.title,
     required this.icon,
     required this.onIconPressed,
@@ -40,12 +41,8 @@ class ListTileWidget extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.lightBlueAccent, Colors.blueAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20.0),
+            color: Colors.black87,
+            borderRadius: BorderRadius.circular(10.0),
           ),
           child: Padding(
             padding: EdgeInsets.all(screenWidth * 0.03),
@@ -53,43 +50,15 @@ class ListTileWidget extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(25.0),
-                  child: Container(
-                    width: 60.0,
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8.0,
-                          offset: Offset(2, 2),
-                        ),
-                      ],
-                    ),
-                    child: Image.network(
-                      imageUrl,
-                      width: 60.0,
-                      height: 60.0,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  child: Icon(leadicon,size:50,color: Colors.white,),
                 ),
                 SizedBox(width: screenWidth * 0.05),
                 Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10.0,
-                          color: Colors.black45,
-                          offset: Offset(2, 2),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: TextWidget(
+                    title: title,
+                    size: 17,
+                    color: Colors.white,
+                  )
                 ),
                 IconButton(
                   icon: Icon(icon, color: Colors.white),
