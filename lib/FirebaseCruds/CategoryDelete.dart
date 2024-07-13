@@ -17,30 +17,46 @@ Future<void> deleteProduct(String mainCategoryName, String subCategoryName, Stri
 
 
 Future<void> deleteSubCategory(String mainCategoryName, String subCategoryName) async {
-  await FirebaseFirestore.instance
-      .collection('MainCategories')
-      .doc(mainCategoryName)
-      .collection('subcategories')
-      .doc(subCategoryName)
-      .delete();
-  showSuccessSnackbar('Data deleted sucessfully');
-  Get.back();
+  try{
+    await FirebaseFirestore.instance
+        .collection('MainCategories')
+        .doc(mainCategoryName)
+        .collection('subcategories')
+        .doc(subCategoryName)
+        .delete();
+    showSuccessSnackbar('Data deleted sucessfully');
+    Get.back();
+  }catch(e){
+    showErrorSnackbar(e.toString());
+    Get.back();
+  }
 }
 
 Future<void> deleteCategory(String mainCategoryName) async {
-  await FirebaseFirestore.instance
-      .collection('MainCategories')
-      .doc(mainCategoryName)
-      .delete();
-  showSuccessSnackbar('Data deleted sucessfully');
-  Get.back();
+  try{
+    await FirebaseFirestore.instance
+        .collection('MainCategories')
+        .doc(mainCategoryName)
+        .delete();
+    showSuccessSnackbar('Data deleted sucessfully');
+    Get.back();
+  }
+  catch(e){
+    showErrorSnackbar(e.toString());
+    Get.back();
+  }
 }
 
 Future<void> deletePersonData(String id) async {
-  await FirebaseFirestore.instance
-      .collection('Orders')
-      .doc(id)
-      .delete();
-  showSuccessSnackbar('Data of Person deleted sucessfully');
-  Get.back();
+  try{
+    await FirebaseFirestore.instance
+        .collection('Orders')
+        .doc(id)
+        .delete();
+    showSuccessSnackbar('Data of Person deleted sucessfully');
+    Get.back();
+  }
+  catch(e){
+    Get.back();
+  }
 }

@@ -20,6 +20,7 @@ class AdminDashboard extends StatelessWidget {
           style: TabStyle.reactCircle,
           items: [
             TabItem(icon: Icons.store, title: 'Shop'),
+            TabItem(icon: Icons.account_balance_wallet, title: 'Date'),
             TabItem(icon: Icons.account_balance_wallet, title: 'Sales'),
             TabItem(icon: Icons.shopping_cart, title: 'Cart'),
             TabItem(icon: Icons.person, title: 'Profile'),

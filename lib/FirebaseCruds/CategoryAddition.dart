@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 Future<void> addMainCategory(String mainCategoryName,String ImageUrl) async {
    try{
      await FirebaseFirestore.instance.collection('MainCategories').doc(mainCategoryName).set({
@@ -55,6 +56,7 @@ Future<void> addProduct( String prodcutname,String mainCategoryName, String subC
 // add to cart query
 Future<void> addtoCart(String Discount,String CategoryName,double oldprice,double Discountprice,int quantity_buy,int remaningquantity,String MainCategory,String Productname) async {
         bool isSucessful=false;
+        String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   try{
             DocumentSnapshot data=await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).get();
             // checking if data in cart already ecists are not
@@ -72,7 +74,7 @@ Future<void> addtoCart(String Discount,String CategoryName,double oldprice,doubl
                 'Price After Discount':newTotalPrice,
                 'Dicount on Items':Discount,
                 'Selected quantity':newQuantity,
-                'Date':DateTime.now(),
+                'Date':formattedDate,
               });
             }else
               {
@@ -82,7 +84,7 @@ Future<void> addtoCart(String Discount,String CategoryName,double oldprice,doubl
                   'Price After Discount':Discountprice,
                   'Dicount on Items':Discount,
                   'Selected quantity':quantity_buy,
-                  'Date':DateTime.now(),
+                  'Date':formattedDate,
                 });
               }
             isSucessful=true;

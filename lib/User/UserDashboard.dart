@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Controllers/SeaarchControllers.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class Userdashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           "Ecommerce App",
           style: TextStyle(
@@ -40,12 +42,20 @@ class Userdashboard extends StatelessWidget {
         ),
         backgroundColor: Colors.blueGrey,
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout,color: Colors.white,),
-            onPressed: ()
-            {
-              logout();
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 13.0),
+            child: Elevated_button(
+              path: (){
+                logout();
+              },
+              color: Colors.white,
+              text: 'Logout',
+              radius: 10,
+              padding: 10,
+              width: 100,
+              height: 20,
+              backcolor: Colors.red,
+            ),
           ),
         ],
         bottom: PreferredSize(

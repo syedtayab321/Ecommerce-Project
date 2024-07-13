@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartScreen.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/SalesAccordingtoDate.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/SalesPersonsScreen.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/HomePage.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Profile.dart';
@@ -14,6 +15,7 @@ class AdminController extends GetxController {
 
   final List<Widget> pages = [
     HomePage(),
+    SalesBasedOnDate(),
     PersonGridView(),
     CartScreen(),
     ProfilePage(),
