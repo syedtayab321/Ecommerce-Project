@@ -180,7 +180,7 @@ class InvoiceScreen extends StatelessWidget {
 
                 double totalCostForDate = dateInvoices.fold(0, (sum, doc) {
                   var productData = doc.data() as Map<String, dynamic>;
-                  return sum + (productData['Total Price'] ?? 0);
+                  return sum + (productData['Price After Discount'] ?? 0);
                 });
 
                 return pw.Column(
@@ -203,7 +203,7 @@ class InvoiceScreen extends StatelessWidget {
                           pw.Text('Product Name: ${productData['Product Name']}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
                           pw.Text('CNIC: $userCnic', style: pw.TextStyle(fontSize: 16)),
                           pw.Text('Time: $formattedTime', style: pw.TextStyle(fontSize: 16)),
-                          pw.Text('Total: \$${productData['Total Price']}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                          pw.Text('Total: \$${productData['Price After Discount']}', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
                           pw.Divider(),
                         ],
                       );

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/InvoiceScreen.dart';
 import 'package:ecommerce_app/Controllers/SeaarchControllers.dart';
+import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
+import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,47 +60,73 @@ class PersonGridView extends StatelessWidget {
           padding: EdgeInsets.all(10.0),
           itemBuilder: (context, index) {
             DocumentSnapshot category = controller.filteredOrders[index];
-            return GestureDetector(
-              onTap: () {
-                Get.to(InvoiceScreen(userCnic: category.id));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blueAccent, Colors.lightBlueAccent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(15.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(2, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 50.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      'User CNIC: ${category.id}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Get.to(InvoiceScreen(userCnic: category.id));
+                  },
+                  child: Container(
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      textAlign: TextAlign.center,
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(2, 2),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person,
+                          size: 50.0,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 10.0),
+                        Text(
+                          'User CNIC: ${category.id}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    onPressed: () {
+                      Get.dialog(ConfirmDialog(
+                          title: 'Delete',
+                          content: 'Are you sure you want to delete ',
+                          confirmText: 'Delete',
+                          cancelText: 'Cancel',
+                          confirmColor: Colors.red,
+                          cancelColor: Colors.black87,
+                          onConfirm: (){
+                            deletePersonData(category.id);
+                          },
+                          onCancel: (){
+                            Get.back();
+                          },
+                      ),
+                      );
+                    }, icon: Icon(Icons.delete_forever),color: Colors.red,),
+                ),
+              ],
             );
           },
         );

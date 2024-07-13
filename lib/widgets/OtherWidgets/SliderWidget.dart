@@ -14,11 +14,11 @@ class AnimatedImageSlider extends StatelessWidget {
   final SliderController sliderController = Get.put(SliderController());
 
   final List<String> images = [
-    'assets/images/back.jpg',
-    'assets/images/back.jpg',
-    'assets/images/back.jpg',
-    'assets/images/back.jpg',
-    'assets/images/back.jpg',
+    'assets/images/1.png',
+    'assets/images/2.jpg',
+    'assets/images/Biscuits.png',
+    'assets/images/chocolate.jpg',
+    'assets/images/ecommerce.jpg',
   ];
 
   @override
@@ -30,8 +30,8 @@ class AnimatedImageSlider extends StatelessWidget {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                  width: Get.width,
+                  margin: EdgeInsets.symmetric(horizontal: 3.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(

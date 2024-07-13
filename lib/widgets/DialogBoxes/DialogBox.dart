@@ -28,7 +28,7 @@ class ConfirmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title:TextWidget(title: title,color: confirmColor,size: 15,) ,
-      content: TextWidget(title: title,color: confirmColor,size: 15,),
+      content: TextWidget(title: content,color: confirmColor,size: 15,),
       actions: <Widget>[
         TextButton(
           child: Text(cancelText),

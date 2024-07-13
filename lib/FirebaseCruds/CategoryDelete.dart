@@ -35,3 +35,12 @@ Future<void> deleteCategory(String mainCategoryName) async {
   showSuccessSnackbar('Data deleted sucessfully');
   Get.back();
 }
+
+Future<void> deletePersonData(String id) async {
+  await FirebaseFirestore.instance
+      .collection('Orders')
+      .doc(id)
+      .delete();
+  showSuccessSnackbar('Data of Person deleted sucessfully');
+  Get.back();
+}

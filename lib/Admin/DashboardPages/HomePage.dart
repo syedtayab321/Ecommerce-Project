@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartScreen.dart';
 import 'package:ecommerce_app/Admin/ProductPages/SubCategoryPage.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/AddCategoryDialogBox.dart';
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
          backgroundColor: Colors.white,
          title: TextWidget(title: 'Home Page',),
          actions: [
-           Icon_Button(icon: Icon(Icons.add_shopping_cart), onPressed: (){}),
+           Icon_Button(icon: Icon(Icons.add_shopping_cart,color: Colors.red,), onPressed: (){Get.to(CartScreen());}),
          ],
       ),
       body: Padding(
@@ -101,7 +102,7 @@ class CategoryData extends StatelessWidget {
                  physics: NeverScrollableScrollPhysics(),
                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                    crossAxisCount: 2,
-                   childAspectRatio: Get.width / (Get.height / 1.5),
+                   childAspectRatio: Get.width / (Get.height / 1.8),
                    crossAxisSpacing: 16,
                    mainAxisSpacing: 16,
                  ),
@@ -116,7 +117,7 @@ class CategoryData extends StatelessWidget {
                      child: Card(
                        elevation: 4,
                        shape: RoundedRectangleBorder(
-                         borderRadius: BorderRadius.circular(15),
+                         borderRadius: BorderRadius.circular(10),
                        ),
                        child: Column(
                          crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,13 +126,13 @@ class CategoryData extends StatelessWidget {
                              children: [
                                ClipRRect(
                                  borderRadius: BorderRadius.only(
-                                   topLeft: Radius.circular(15),
-                                   topRight: Radius.circular(15),
+                                   topLeft: Radius.circular(10),
+                                   topRight: Radius.circular(10),
                                  ),
                                  child: Image.network(
                                    ImageData['Image Url']!,
                                    fit: BoxFit.cover,
-                                   height: 150,
+                                   height: 140,
                                    width: double.infinity,
                                  ),
                                ),

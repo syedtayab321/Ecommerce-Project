@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartDetailsCard.dart';
 
 class CartScreen extends StatelessWidget {
-  TextEditingController _cnicController = new TextEditingController();
+  TextEditingController cnicController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +25,7 @@ class CartScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
-          if (!snapshot.hasData) {
+          if (snapshot.hasData || snapshot.data==null) {
             return Center(child: Text('No Data Available'));
           }
           final docs = snapshot.data!.docs;
@@ -59,7 +59,7 @@ class CartScreen extends StatelessWidget {
                           SizedBox(height: 20),
                           TextFormField(
                             keyboardType: TextInputType.number,
-                            controller: _cnicController,
+                            controller: cnicController,
                             decoration: InputDecoration(
                               labelText: 'CNIC',
                               hintText: 'Enter your CNIC',
@@ -88,10 +88,15 @@ class CartScreen extends StatelessWidget {
                             height: 30,
                             radius: 10,
                             path: () {
-                              if (_cnicController.text.isNotEmpty && _cnicController.text.length<11) {
-                                addBuyNow(_cnicController.text);
-                              } else {
+                              int cnic=int.parse(cnicController.text);
+                              if (cnicController.text.isNotEmpty && cnicController.text.length==13) {
+                                addBuyNow(cnicController.text);
+                                Get.back();
+                              } else if(cnicController.text.isEmpty) {
                                 showErrorSnackbar('Please fill all the fields');
+                              }
+                              else {
+                                showErrorSnackbar('Cnic must contain 13 digits');
                               }
                             }),
                       ],

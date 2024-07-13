@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/ProductPages/AddtoCartQuery.dart';
+import 'package:ecommerce_app/Admin/ProductPages/ProductUpdate.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/ProductDialog.dart';
@@ -65,108 +66,121 @@ class ProductDetailsCard extends StatelessWidget {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var ProductData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                 int stock=int.parse(ProductData['Stock'].toString());
-                 double price=double.parse(ProductData['Price']);
+                int stock = int.parse(ProductData['Stock'].toString());
+                double price = double.parse(ProductData['Price']);
                 return Card(
                   color: Colors.black,
-                  elevation: 4.0,
+                  elevation: 8.0,
                   margin: EdgeInsets.all(12.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: IntrinsicHeight(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(15.0)),
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
                             child: Image.network(
                               ProductData['Image Url'],
                               fit: BoxFit.cover,
-                              height: 150.0,
+                              height: 160.0,
                               width: double.infinity,
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  ProductData['name'],
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                Expanded(
+                                  child: Text(
+                                    ProductData['name'],
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                                SizedBox(height: 4.0),
-                                Text(
-                                 'Price:\£${price}',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(height: 4.0),
-                                Text(
-                                  stock <= 0 ? 'Out of Stock':  'Stock:${stock}',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color:
-                                      stock  > 0 ? Colors.white : Colors.red,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                SizedBox(width: 8.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '£${price.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    Text(
+                                      stock <= 0 ? 'Out of Stock' : 'Stock: $stock',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: stock > 0 ? Colors.white : Colors.red,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 12.0,right: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                TextWidget(title: 'Expiray Date',color: Colors.white,),
-                                TextWidget(title: '${ProductData['ExpiryDate']}',color: Colors.red,)
+                                TextWidget(
+                                  title: 'Expiry Date',
+                                  color: Colors.white,
+                                ),
+                                TextWidget(
+                                  title: '${ProductData['ExpiryDate']}',
+                                  color: Colors.red,
+                                ),
                               ],
                             ),
                           ),
+                          SizedBox(height: 10.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Elevated_button(
-                                path: () {},
+                                path: () {
+                                  showUpdateProductSheet(context, MainCategory, SubCategory, ProductData);
+                                },
                                 color: Colors.green,
                                 text: 'Update',
                                 radius: 7,
                                 padding: 10,
                                 width: 100,
-                                height: 20,
+                                height: 40,
                                 backcolor: Colors.white,
                               ),
                               Elevated_button(
                                 path: () {
-                                  stock <= 0 ?
-                                  Get.snackbar('Out of stock','Items are out of stock',backgroundColor: Colors.red,colorText: Colors.white):
-                                  Get.dialog(
-                                      QuantitySelector(
-                                        priceperitem: price,
-                                        categoryName: SubCategory,
-                                        stock: stock,
-                                        MainCategory:MainCategory,
-                                        ProductName: ProductData['name'],
-                                      ));
+                                  stock <= 0
+                                      ? Get.snackbar('Out of stock', 'Items are out of stock', backgroundColor: Colors.red, colorText: Colors.white)
+                                      : Get.dialog(QuantitySelector(
+                                    priceperitem: price,
+                                    categoryName: SubCategory,
+                                    stock: stock,
+                                    MainCategory: MainCategory,
+                                    ProductName: ProductData['name'],
+                                  ));
                                 },
                                 color: Colors.white,
                                 text: 'Add to cart',
                                 radius: 10,
                                 padding: 10,
                                 width: 110,
-                                height: 20,
+                                height: 40,
                                 backcolor: Colors.green,
                               ),
                               Elevated_button(
@@ -178,21 +192,21 @@ class ProductDetailsCard extends StatelessWidget {
                                     cancelText: 'Cancel',
                                     confirmColor: Colors.red,
                                     cancelColor: Colors.green,
-                                    onConfirm: (){
+                                    onConfirm: () {
                                       deleteProduct(MainCategory, SubCategory, ProductData['name']);
                                       Get.back();
                                     },
-                                    onCancel: (){Get.back();},
-                                  ),
-                                  );
-
+                                    onCancel: () {
+                                      Get.back();
+                                    },
+                                  ));
                                 },
                                 color: Colors.white,
                                 text: 'Delete',
                                 radius: 7,
                                 padding: 10,
                                 width: 100,
-                                height: 20,
+                                height: 40,
                                 backcolor: Colors.red,
                               ),
                             ],

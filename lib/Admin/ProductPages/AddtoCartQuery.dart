@@ -134,11 +134,11 @@ class QuantitySelector extends StatelessWidget {
               this.ProductName,
             ).then((value) {
               showSuccessSnackbar('Product added to cart successfully');
-              Get.back();
             }).catchError((error) {
               showErrorSnackbar('Failed to add product to cart: $error');
             }).whenComplete(() {
               _counterController.setLoading(false);
+              Get.back();
             });
           },
           radius: 10,

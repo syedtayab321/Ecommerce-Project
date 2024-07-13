@@ -77,8 +77,6 @@ Future<void> addtoCart(String Discount,String CategoryName,double oldprice,doubl
                 'Selected quantity':newQuantity,
                 'Date':DateTime.now(),
               });
-              Get.back();
-              showSuccessSnackbar('Data added to cart successfully');
             }else
               {
                 await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).set({
@@ -89,8 +87,6 @@ Future<void> addtoCart(String Discount,String CategoryName,double oldprice,doubl
                   'Selected quantity':quantity_buy,
                   'Date':DateTime.now(),
                 });
-                Get.back();
-                showSuccessSnackbar('Data added to cart successfully');
               }
             isSucessful=true;
         }
@@ -109,8 +105,6 @@ Future<void> addtoCart(String Discount,String CategoryName,double oldprice,doubl
            .update({
          'Stock':remaningquantity,
        });
-       showSuccessSnackbar('Data added to cart successfully');
-       Get.back();
      }
      else
      {
