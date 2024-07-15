@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/Controllers/AddToCartController.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -54,38 +55,42 @@ Future<void> addProduct( String prodcutname,String mainCategoryName, String subC
    }
 }
 // add to cart query
-Future<void> addtoCart(String Discount,String CategoryName,double oldprice,double Discountprice,int quantity_buy,int remaningquantity,String MainCategory,String Productname) async {
+Future<void> addtoCart(String SubCategoryName,double price,int quantity_buy,int remaningquantity,String MainCategory,String Productname,double priceperitem) async {
         bool isSucessful=false;
+        final CounterController _counterController = Get.put(CounterController());
         String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   try{
             DocumentSnapshot data=await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).get();
             // checking if data in cart already ecists are not
             if(data.exists){
               int currentQuantity = data.get('Selected quantity').toInt();
-              double currentTotalPrice = data.get('Price After Discount').toDouble();
-              double currentoldPrice = data.get('Price Before Discount').toDouble();
+              double currentoldPrice = data.get('Total Price').toDouble();
 
               int newQuantity = currentQuantity + quantity_buy;
-              double newTotalPrice = currentTotalPrice + Discountprice;
-              double oldtotalprice=currentoldPrice + oldprice;
+              double totalprice=currentoldPrice + price;
 
               await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).update({
-                'Price Before Discount':oldtotalprice,
-                'Price After Discount':newTotalPrice,
-                'Dicount on Items':Discount,
+                'Remaining Quantity':remaningquantity,
+                'Total Price':totalprice,
                 'Selected quantity':newQuantity,
                 'Date':formattedDate,
               });
+              _counterController.quantity.value=1;
+              Get.back();
             }else
               {
                 await FirebaseFirestore.instance.collection('Cart Data').doc(Productname).set({
+                  'Main Category':MainCategory,
+                  'Sub Category':SubCategoryName,
                   'Product Name':Productname,
-                  'Price Before Discount':oldprice,
-                  'Price After Discount':Discountprice,
-                  'Dicount on Items':Discount,
+                  'Total Price':price,
                   'Selected quantity':quantity_buy,
+                  'Remaining Quantity':remaningquantity,
+                  'Price Per Item':priceperitem,
                   'Date':formattedDate,
                 });
+                Get.back();
+                _counterController.quantity.value=1;
               }
             isSucessful=true;
         }
@@ -98,7 +103,7 @@ Future<void> addtoCart(String Discount,String CategoryName,double oldprice,doubl
            .collection('MainCategories')
            .doc(MainCategory)
            .collection('subcategories')
-           .doc(CategoryName)
+           .doc(SubCategoryName)
            .collection('Products')
            .doc(Productname)
            .update({

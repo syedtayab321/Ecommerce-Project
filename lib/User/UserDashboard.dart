@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/SalesAccordingtoDate.dart';
 import 'package:ecommerce_app/Controllers/SeaarchControllers.dart';
+import 'package:ecommerce_app/Controllers/totalcostController.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ import 'InvoiceScreen.dart';
 
 class Userdashboard extends StatelessWidget {
   final AuthService _authService = AuthService();
-
+  final OrderController orderController = Get.put(OrderController());
   void logout() async {
     Get.defaultDialog(
       title: "Logout",
@@ -20,20 +22,24 @@ class Userdashboard extends StatelessWidget {
       confirmTextColor: Colors.white,
       onConfirm: () {
         _authService.signOut();
-        Get.offAllNamed('/');},
+        Get.offAllNamed('/');
+      },
       onCancel: () {
         Get.back();
       },
     );
   }
+
   final SalesSearchController controller = Get.put(SalesSearchController());
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: true,
+      child: Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          "Ecommerce App",
+          "BrandWay Foods",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -45,7 +51,7 @@ class Userdashboard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 13.0),
             child: Elevated_button(
-              path: (){
+              path: () {
                 logout();
               },
               color: Colors.white,
@@ -107,7 +113,7 @@ class Userdashboard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Enter CNIC to search',
+                    hintText: 'Enter Name to search',
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -128,6 +134,24 @@ class Userdashboard extends StatelessWidget {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Center(
+              child: Elevated_button(
+                text: 'View Sales Per Day',
+                path: (){
+                  Get.to(SalesBasedOnDate());
+                },
+                padding: 13,
+                width: Get.width,
+                height: 40,
+                radius: 5,
+                color: Colors.white,
+                backcolor: Colors.purple,
+                fontsize: 18,
+              ),
+            ),
+          ),
 
           Obx(() {
             if (controller.orders.isEmpty) {
@@ -142,7 +166,7 @@ class Userdashboard extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: Get.width / (Get.height / 2),
+                  childAspectRatio: Get.width / (Get.height / 1.8),
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
@@ -152,40 +176,45 @@ class Userdashboard extends StatelessWidget {
                   DocumentSnapshot category = controller.filteredOrders[index];
                   return GestureDetector(
                     onTap: () {
-                      Get.to(InvoiceScreen(userCnic: category.id));
+                      Get.to(InvoiceScreen(userName: category.id));
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       elevation: 5,
-                      color: Colors.white60,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Image.asset(
                               'assets/images/comp_logo.png', // Logo at the top
                               height: 100,
                               fit: BoxFit.cover,
                             ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextWidget(
-                                    title: '${category.id}',
-                                    size: 16.0,
-                                  ),
-                                  SizedBox(height: 8.0),
-                                ],
+                            Expanded(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextWidget(
+                                      title: 'User Name:',
+                                      size: 16.0,
+                                    ),
+                                    TextWidget(
+                                      title: '${category.id}',
+                                      size: 16.0,
+                                    ),
+                                    SizedBox(height: 8.0),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -195,18 +224,7 @@ class Userdashboard extends StatelessWidget {
           }),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money),
-            label: 'Sale',
-          ),
-        ],
-      ),
+    ),
     );
   }
 }

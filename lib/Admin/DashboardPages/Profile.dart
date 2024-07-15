@@ -45,7 +45,7 @@ class ProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             TextWidget(
-              title: 'admin321@example.com',
+              title: 'admin321@gmail.com',
               size: 18,
               color: Colors.grey[700],
             ),
@@ -65,7 +65,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: TextWidget(
                     title: 'Brand Way Food is an e-commerce store providing a variety of products ranging from electronics to home decor. Our mission is to offer high-quality products at competitive prices.',
-                    size: 18, color: Colors.grey[800]),
+                    size: 16, color: Colors.grey[800]),
                 ),
               ],
             ),
@@ -77,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: TextWidget(
                     title: 'We offer reliable and fast shipping services to ensure your products reach you on time.',
-                    size: 18, color: Colors.grey[800]
+                    size: 16, color: Colors.grey[800]
                   ),
                 ),
               ],
@@ -90,7 +90,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: TextWidget(
                     title: 'Our customer support is available 24/7 to assist you with any queries or issues.',
-                    size: 18, color: Colors.grey[800]
+                    size: 16, color: Colors.grey[800]
                   ),
                 ),
               ],

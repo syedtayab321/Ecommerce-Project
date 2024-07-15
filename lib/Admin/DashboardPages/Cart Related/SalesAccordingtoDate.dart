@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/Controllers/SalesBasedOnDateController.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -11,8 +12,9 @@ class SalesBasedOnDate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sales Invoice'),
-        backgroundColor: Colors.deepPurple,
+        automaticallyImplyLeading: false,
+        title: TextWidget(title: 'Sales Invoice',color: Colors.white,),
+        backgroundColor: Colors.black87,
       ),
       body: Column(
         children: [
@@ -56,27 +58,28 @@ class SalesBasedOnDate extends StatelessWidget {
                             itemBuilder: (context, index) {
                               var sale = orderController.sales[index];
                               return Card(
+                                color: Colors.black87,
                                 margin: EdgeInsets.symmetric(vertical: 8),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Product: ${sale['productName'] ?? 'N/A'}',
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      TextWidget(
+                                        title: 'Product: ${sale['Product Name'] ?? 'N/A'}',
+                                        size: 18, weight: FontWeight.bold,color: Colors.white,
                                       ),
-                                      Text(
-                                        'Quantity: ${sale['quantity'] ?? 'N/A'}',
-                                        style: TextStyle(fontSize: 16),
+                                      TextWidget(
+                                        title: 'Quantity: ${sale['Selected quantity'] ?? 'N/A'}',
+                                        size: 16,color: Colors.white,
                                       ),
-                                      Text(
-                                        'Price: \$${sale['Price After Discount'] ?? 'N/A'}',
-                                        style: TextStyle(fontSize: 16),
+                                      TextWidget(
+                                        title: 'Price: \£${sale['Total Price'] ?? 'N/A'}',
+                                        size: 16,color: Colors.white,
                                       ),
-                                      Text(
-                                        'Date: ${sale['date'] ?? 'N/A'}',
-                                        style: TextStyle(fontSize: 16),
+                                      TextWidget(
+                                        title: 'Date: ${sale['Date'] ?? 'N/A'}',
+                                        size: 16,color: Colors.white,
                                       ),
                                     ],
                                   ),
@@ -87,7 +90,7 @@ class SalesBasedOnDate extends StatelessWidget {
                         ),
                         SizedBox(height: 16),
                         Text(
-                          'Total Cost: \$${orderController.totalCost.value}',
+                          'Total Cost: \£${orderController.totalCost.value}',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartScreen.dart';
 import 'package:ecommerce_app/Admin/ProductPages/AddtoCartQuery.dart';
 import 'package:ecommerce_app/Admin/ProductPages/ProductUpdate.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
@@ -26,22 +27,26 @@ class ProductDetailsCard extends StatelessWidget {
           title: SubCategory,
         ),
         actions: [
+          IconButton(onPressed: (){
+            Get.to(CartScreen());
+          }, icon: Icon(Icons.add_shopping_cart)),
+          SizedBox(width: 20,),
           Padding(
-            padding: const EdgeInsets.only(right: 13.0),
+            padding: const EdgeInsets.only(right: 20.0),
             child: Elevated_button(
-              path: () => {
+              path: () {
                 Get.dialog(ProductDialog(
                   MainCategory: this.MainCategory,
                   SubCategory: this.SubCategory,
-                )),
+                ));
               },
               color: Colors.white,
               text: 'Add',
               radius: 7,
               padding: 10,
-              width: 150,
-              height: 20,
-              backcolor: Colors.black,
+              width: 100,
+              height: 40,
+              backcolor: Colors.black87,
             ),
           ),
         ],

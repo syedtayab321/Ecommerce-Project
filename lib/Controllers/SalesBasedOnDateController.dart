@@ -28,10 +28,9 @@ class SalesOnDateController extends GetxController {
             .collection('Buyed Products')
             .where('Date', isEqualTo: DateFormat('dd-MM-yyyy').format(selectedDate.value))
             .get();
-        showSuccessSnackbar(buyedProductsSnapshot.docs.length.toString());
         for (var productDoc in buyedProductsSnapshot.docs) {
           sales.add(productDoc);
-          sum += productDoc['Price After Discount'];
+          sum += productDoc['Total Price'];
         }
       }
 

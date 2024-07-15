@@ -8,21 +8,21 @@ import 'package:get/get.dart';
 
 class ListTileWidget extends StatelessWidget {
   final String title,MainCategory;
-  final IconData icon,leadicon;
+  final IconData leadicon;
+  final IconButton icon;
   final VoidCallback onIconPressed;
-
   const ListTileWidget({
     Key? key,
     required this.leadicon,
     required this.title,
     required this.icon,
     required this.onIconPressed,
-    required this.MainCategory
+    required this.MainCategory,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = Get.width;
 
     return InkWell(
       onTap: (){
@@ -61,7 +61,7 @@ class ListTileWidget extends StatelessWidget {
                   )
                 ),
                 IconButton(
-                  icon: Icon(icon, color: Colors.white),
+                  icon: icon,
                   onPressed: onIconPressed,
                   splashRadius: 24.0,
                 ),

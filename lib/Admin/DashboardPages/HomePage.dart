@@ -82,105 +82,109 @@ class CategoryData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance.collection('MainCategories').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No data found'));
-          }
-          else
-          {
-             return Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-               child: GridView.builder(
-                 shrinkWrap: true,
-                 physics: NeverScrollableScrollPhysics(),
-                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                   crossAxisCount: 2,
-                   childAspectRatio: Get.width / (Get.height / 1.5),
-                   crossAxisSpacing: 16,
-                   mainAxisSpacing: 16,
-                 ),
-                 itemCount: snapshot.data!.docs.length,
-                 itemBuilder: (context, index) {
-                   var ImageData=snapshot.data!.docs[index].data() as Map<String,dynamic>;
-                   DocumentSnapshot category = snapshot.data!.docs[index];
-                   return InkWell(
-                     onTap: () {
-                       Get.to(SubCategoriesPage(Productname: category.id));
-                     },
-                     child: Card(
-                       elevation: 4,
-                       shape: RoundedRectangleBorder(
-                         borderRadius: BorderRadius.circular(10),
-                       ),
-                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           Stack(
-                             children: [
-                               ClipRRect(
-                                 borderRadius: BorderRadius.only(
-                                   topLeft: Radius.circular(10),
-                                   topRight: Radius.circular(10),
-                                 ),
-                                 child: Image.network(
-                                   ImageData['Image Url']!,
-                                   fit: BoxFit.cover,
-                                   height: 140,
-                                   width: double.infinity,
-                                 ),
-                               ),
-                               Positioned(
-                                 top: 8,
-                                 right: 8,
-                                 child: IconButton(
-                                   icon: Icon(
-                                     Icons.delete,
-                                     color: Colors.red,
-                                   ),
-                                   onPressed: () {
-                                     Get.dialog(ConfirmDialog(
-                                             title: 'Delete',
-                                             content: 'Are You Sure ?',
-                                             confirmText:'Delete',
-                                             cancelText: 'Cancel',
-                                             onConfirm: (){
-                                               deleteCategory(category.id);
-                                               Get.back();
-                                             },
-                                             onCancel: (){
-                                               Get.back();
-                                             },
-                                           ),);
-                                     },
-                                 ),
-                               ),
-                             ],
-                           ),
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: Text(
-                               category.id,
-                               style: TextStyle(
-                                 fontSize: 20,
-                                 fontWeight: FontWeight.bold,
-                                 color: Colors.black87,
-                               ),
-                             ),
-                           ),
-                         ],
-                       ),
-                     ),
-                   );
-                 },
-               ),
-             );
-          };
-        });
+      stream: FirebaseFirestore.instance.collection('MainCategories').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(child: Text('No data found'));
+        } else {
+          // Sort the documents in descending order
+          List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
+          docs.sort((a, b) => b.id.compareTo(a.id));
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: Get.width / (Get.height / 1.5),
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                var ImageData = docs[index].data() as Map<String, dynamic>;
+                DocumentSnapshot category = docs[index];
+                return InkWell(
+                  onTap: () {
+                    Get.to(SubCategoriesPage(Productname: category.id));
+                  },
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                              child: Image.network(
+                                ImageData['Image Url']!,
+                                fit: BoxFit.cover,
+                                height: 140,
+                                width: double.infinity,
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () {
+                                  Get.dialog(
+                                    ConfirmDialog(
+                                      title: 'Delete',
+                                      content: 'Are You Sure?',
+                                      confirmText: 'Delete',
+                                      cancelText: 'Cancel',
+                                      onConfirm: () {
+                                        deleteCategory(category.id);
+                                        Get.back();
+                                      },
+                                      onCancel: () {
+                                        Get.back();
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            category.id,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      },
+    );
   }
 }

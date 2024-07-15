@@ -1,26 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 class InvoiceScreen extends StatelessWidget {
-  final String userCnic;
-  InvoiceScreen({required this.userCnic});
+  final String userName;
+
+  InvoiceScreen({required this.userName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Invoice of ' + userCnic),
+        title: Text('Invoice of ' + userName),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Orders')
-            .doc(userCnic)
+            .doc(userName)
             .collection('Buyed Products')
             .snapshots(),
         builder: (context, snapshot) {
@@ -35,30 +31,30 @@ class InvoiceScreen extends StatelessWidget {
           }
 
           final invoices = snapshot.data!.docs;
+          var productData;
 
-          // Group invoices by date
+          // Group invoices by id
           Map<String, List<QueryDocumentSnapshot>> groupedInvoices = {};
           for (var doc in invoices) {
             var productData = doc.data() as Map<String, dynamic>;
-            Timestamp timestamp = productData['Date'];
-            DateTime dateTime = timestamp.toDate();
-            String formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
+            String productId = productData['Product id'];
 
-            if (!groupedInvoices.containsKey(formattedDate)) {
-              groupedInvoices[formattedDate] = [];
+            if (!groupedInvoices.containsKey(productId)) {
+              groupedInvoices[productId] = [];
             }
-            groupedInvoices[formattedDate]!.add(doc);
+            groupedInvoices[productId]!.add(doc);
           }
 
           return ListView.builder(
             itemCount: groupedInvoices.keys.length,
             itemBuilder: (context, index) {
-              String date = groupedInvoices.keys.elementAt(index);
-              List<QueryDocumentSnapshot> dateInvoices = groupedInvoices[date]!;
+              String productId = groupedInvoices.keys.elementAt(index);
+              List<
+                  QueryDocumentSnapshot> idInvoices = groupedInvoices[productId]!;
 
-              double totalCostForDate = dateInvoices.fold(0, (sum, doc) {
-                var productData = doc.data() as Map<String, dynamic>;
-                return sum + (productData['Price After Discount'] ?? 0);
+              double totalCostForId = idInvoices.fold(0, (sum, doc) {
+                productData = doc.data() as Map<String, dynamic>;
+                return sum + (productData['Total Price'] ?? 0);
               });
 
               return Card(
@@ -67,65 +63,204 @@ class InvoiceScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: TextWidget(
-                          title: 'Date: $date',
-                          size: 20,
-                          weight: FontWeight.bold,
+                          title: 'Brand Way Food Ltd',
                           color: Colors.white,
+                          size: 20,
+                          spacing: 3,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: TextWidget(
-                          title: 'Total Cost:        \£${totalCostForDate.toStringAsFixed(2)}',
-                          size: 20,
-                          weight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextWidget(
+                            title: 'Name:        ',
+                            color: Colors.green,
+                            size: 18,
+                          ),
+                          TextWidget(
+                            title: userName,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ],
                       ),
-                      Divider(color: Colors.white,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextWidget(
+                            title: 'Date:        ',
+                            color: Colors.green,
+                            size: 18,
+                          ),
+                          TextWidget(
+                            title: productData['Date'],
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextWidget(
+                            title: 'Address:    ',
+                            color: Colors.green,
+                            size: 18,
+                          ),
+                          TextWidget(
+                            title: productData['Address'],
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextWidget(
+                            title: 'Product Id:   ',
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          TextWidget(
+                            title: productId,
+                            color: Colors.white,
+                            size: 15,
+                          ),
+                        ],
+                      ),
+                      Divider(color: Colors.white),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextWidget(
+                            title: 'Product Name',
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          Spacer(),
+                          TextWidget(
+                            title: 'Quantity',
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          Spacer(),
+                          TextWidget(
+                            title: 'Total Price',
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                      Divider(color: Colors.white),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: dateInvoices.length,
+                        itemCount: idInvoices.length,
                         itemBuilder: (context, index) {
-                          var productData = dateInvoices[index].data() as Map<String, dynamic>;
-                          Timestamp timestamp = productData['Date'];
-                          DateTime dateTime = timestamp.toDate();
-                          String formattedTime = DateFormat('kk:mm').format(dateTime);
+                          var productData = idInvoices[index].data() as Map<
+                              String,
+                              dynamic>;
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextWidget(
-                                title: 'Product Name:            ${productData['Product Name']}',
-                                size: 16,
-                                weight: FontWeight.bold,
-                                color: Colors.white,
+                              Row(
+                                children: [
+                                  TextWidget(
+                                    title: '${productData['Product Name']}',
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  Spacer(),
+                                  TextWidget(
+                                    title: '${productData['Selected quantity']}'
+                                        .toString(),
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  Spacer(),
+                                  TextWidget(
+                                    title: '\£${productData['Total Price']
+                                        .toString()}',
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ],
                               ),
-                              TextWidget(
-                                title: 'CNIC:                            $userCnic',
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                              TextWidget(
-                                title: 'Time:                            $formattedTime',
-                                size: 16,
-                                color: Colors.white,
-                              ),
-                              TextWidget(
-                                title: 'Total:                                 \£${productData['Price After Discount']}',
-                                size: 16,
-                                weight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              Divider(color: Colors.white,),
                             ],
                           );
                         },
+                      ),
+                      Divider(color: Colors.white),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            children: [
+                              TextWidget(
+                                title: 'Total Price',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              Spacer(),
+                              TextWidget(
+                                title: '\£${productData['Price Before Discount']
+                                    .toString()}',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              TextWidget(
+                                title: 'Discount',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              Spacer(),
+                              TextWidget(
+                                title: '${productData['Discount']
+                                    .toString()}\%',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              TextWidget(
+                                title: 'Payable Price',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              Spacer(),
+                              TextWidget(
+                                title: productData['Price After Discount']
+                                    .toString(),
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Divider(color: Colors.white),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextWidget(
+                          title: 'Thanks for Shopping!!!!!',
+                          color: Colors.white,
+                          size: 20,
+                          spacing: 3,
+                        ),
                       ),
                     ],
                   ),

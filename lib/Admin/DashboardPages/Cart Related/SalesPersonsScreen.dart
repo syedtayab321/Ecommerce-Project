@@ -28,7 +28,7 @@ class PersonGridView extends StatelessWidget {
               Center(
                 child: Obx(() {
                   return TextWidget(
-                    title:'Total sales cost: \£${orderController.totalCost.value}',
+                    title:'Total sales cost: \£${orderController.totalCost.value.toStringAsFixed(2)}',
                     size: 24,color: Colors.white,
                   );
                 }),
@@ -58,7 +58,7 @@ class PersonGridView extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.orders.isEmpty) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child:Text('No documents found') );
         }
 
         if (controller.filteredOrders.isEmpty) {
@@ -81,7 +81,7 @@ class PersonGridView extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Get.to(InvoiceScreen(userCnic: category.id));
+                    Get.to(InvoiceScreen(userName: category.id));
                   },
                   child: Container(
                     width: Get.width,
@@ -110,7 +110,7 @@ class PersonGridView extends StatelessWidget {
                         ),
                         SizedBox(height: 10.0),
                         Text(
-                          'User CNIC: ${category.id}',
+                          'User Name : ${category.id}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.0,
@@ -135,6 +135,7 @@ class PersonGridView extends StatelessWidget {
                           cancelColor: Colors.black87,
                           onConfirm: (){
                             deletePersonData(category.id);
+                            Get.back();
                           },
                           onCancel: (){
                             Get.back();

@@ -47,14 +47,14 @@ class _UserloginState extends State<Userlogin> {
                 child: Column(
                   children: [
                     TextWidget(
-                      title: 'Hello, Guest!',
+                      title: 'BrandWay Food Ltd',
                         size: 24,
                         weight: FontWeight.bold,
 
                     ),
                     SizedBox(height: 8),
                     TextWidget(
-                      title: 'Welcome to Ecommerce',
+                      title: 'Welcome to BrandWay Food Ltd',
                         size: 18,
                     ),
                     SizedBox(height: 8),

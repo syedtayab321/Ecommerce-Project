@@ -8,7 +8,9 @@ class AdminDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: true,
+      child: Scaffold(
       body: Obx(() {
         return _controller.pages[_controller.selectedIndex.value];
       }),
@@ -20,7 +22,7 @@ class AdminDashboard extends StatelessWidget {
           style: TabStyle.reactCircle,
           items: [
             TabItem(icon: Icons.store, title: 'Shop'),
-            TabItem(icon: Icons.account_balance_wallet, title: 'Date'),
+            TabItem(icon: Icons.calendar_month, title: 'Dates'),
             TabItem(icon: Icons.account_balance_wallet, title: 'Sales'),
             TabItem(icon: Icons.shopping_cart, title: 'Cart'),
             TabItem(icon: Icons.person, title: 'Profile'),
@@ -28,9 +30,9 @@ class AdminDashboard extends StatelessWidget {
           initialActiveIndex: _controller.selectedIndex.value,
           onTap: _controller.onItemTapped,
           height: 50,
-          curveSize: 20,
+          curveSize: 90,
         );
       }),
-    );
+    ),);
   }
 }

@@ -20,7 +20,6 @@ class QuantitySelector extends StatelessWidget {
   });
 
   final CounterController _counterController = Get.put(CounterController());
-  final TextEditingController _discountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -70,34 +69,16 @@ class QuantitySelector extends StatelessWidget {
                   );
                 }),
                 SizedBox(height: 16.0),
-                TextField(
-                  controller: _discountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Enter Discount (%)',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    _counterController.updateDiscount(value);
-                  },
-                ),
-                SizedBox(height: 16.0),
                 Obx(() {
                   totalprice = _counterController.quantity.value * priceperitem;
                   int selected_quantity = _counterController.quantity.value;
                   quantity_buy = selected_quantity;
                   remainingquantity = stock - selected_quantity;
 
-                  discountedPrice = totalprice - (totalprice * (_counterController.discount.value / 100));
                   return Column(
                     children: [
                       Text(
                         'Total Price: \£${totalprice.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Discounted Price: \£${discountedPrice.toStringAsFixed(2)}',
                         style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -124,21 +105,19 @@ class QuantitySelector extends StatelessWidget {
           path: () async {
             _counterController.setLoading(true);
             await addtoCart(
-              _discountController.text,
               this.categoryName,
               this.totalprice,
-              this.discountedPrice,
               this.quantity_buy,
               this.remainingquantity,
               this.MainCategory,
               this.ProductName,
+              this.priceperitem,
             ).then((value) {
               showSuccessSnackbar('Product added to cart successfully');
             }).catchError((error) {
               showErrorSnackbar('Failed to add product to cart: $error');
             }).whenComplete(() {
               _counterController.setLoading(false);
-              Get.back();
             });
           },
           radius: 10,

@@ -13,7 +13,6 @@ import 'package:get/get.dart';
 class SubCategoriesPage extends StatelessWidget {
   final String Productname;
   TextEditingController _productnameController = new TextEditingController();
-  ImagePickerController _imageController = Get.put(ImagePickerController());
   SubCategoriesPage({required this.Productname});
   final RxBool isLoading = false.obs;
 
@@ -53,34 +52,34 @@ class SubCategoriesPage extends StatelessWidget {
             return isLoading.value
                 ? CircularProgressIndicator()
                 : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Elevated_button(
-                        color: Colors.black,
-                        text: 'Cancel',
-                        radius: 10,
-                        padding: 10,
-                        width: 100,
-                        height: 40,
-                        backcolor: Colors.white,
-                        path: () {
-                          Get.back();
-                        },
-                      ),
-                      Elevated_button(
-                        color: Colors.white,
-                        text: 'Add',
-                        radius: 10,
-                        padding: 10,
-                        width: 100,
-                        height: 40,
-                        backcolor: Colors.black,
-                        path: () {
-                          SubCategoryAdd();
-                        },
-                      ),
-                    ],
-                  );
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Elevated_button(
+                  color: Colors.black,
+                  text: 'Cancel',
+                  radius: 10,
+                  padding: 10,
+                  width: 100,
+                  height: 40,
+                  backcolor: Colors.white,
+                  path: () {
+                    Get.back();
+                  },
+                ),
+                Elevated_button(
+                  color: Colors.white,
+                  text: 'Add',
+                  radius: 10,
+                  padding: 10,
+                  width: 100,
+                  height: 40,
+                  backcolor: Colors.black,
+                  path: () {
+                    SubCategoryAdd();
+                  },
+                ),
+              ],
+            );
           }),
         ],
       ),
@@ -89,6 +88,47 @@ class SubCategoriesPage extends StatelessWidget {
       barrierDismissible: true,
       contentPadding: EdgeInsets.all(20),
     );
+  }
+
+  void showSubDocuments(BuildContext context, String subCategory) async {
+    QuerySnapshot subDocumentsSnapshot = await FirebaseFirestore.instance
+        .collection('MainCategories')
+        .doc(Productname)
+        .collection('subcategories')
+        .doc(subCategory)
+        .collection('Products')
+        .get();
+
+    if (subDocumentsSnapshot.docs.isNotEmpty) {
+      Get.dialog(
+        AlertDialog(
+          title: Text('Sub Documents'),
+          content: Container(
+            width: Get.width*2,
+            height: double.maxFinite,
+            child: ListView.builder(
+              itemCount: subDocumentsSnapshot.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot subDocument = subDocumentsSnapshot.docs[index];
+                return ListTile(
+                    leading:TextWidget(title: (index+1).toString(),size: 20,),
+                    title: TextWidget(title: subDocument.id,size: 20,)
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text('Close'),
+            ),
+          ],
+        ),
+        barrierDismissible: true,
+      );
+    } else {
+      showErrorSnackbar('No sub-documents found.');
+    }
   }
 
   @override
@@ -159,7 +199,7 @@ class SubCategoriesPage extends StatelessWidget {
                   final allSubCategories = snapshot.data!.docs;
                   return Obx(() {
                     final filteredSubCategories =
-                        allSubCategories.where((category) {
+                    allSubCategories.where((category) {
                       final categoryName = category.id.toLowerCase();
                       final query = searchController.query.value.toLowerCase();
                       return categoryName.contains(query);
@@ -171,11 +211,16 @@ class SubCategoriesPage extends StatelessWidget {
                         itemCount: filteredSubCategories.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot category =
-                              filteredSubCategories[index];
+                          filteredSubCategories[index];
                           return ListTileWidget(
                             title: category.id,
-                            leadicon: Icons.person,
-                            icon: Icons.arrow_forward_ios_sharp,
+                            leadicon: Icons.cookie,
+                            icon:IconButton(
+                                onPressed: (){
+                                  showSubDocuments(context, category.id);
+                                },
+                                icon: Icon(Icons.expand_circle_down,color: Colors.white,)
+                            ) ,
                             MainCategory: this.Productname,
                             onIconPressed: () {
                               Get.to(

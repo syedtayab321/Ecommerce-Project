@@ -21,11 +21,15 @@ class OrderController extends GetxController {
             .get();
 
         for (var productDoc in buyedProductsSnapshot.docs) {
-          sum += productDoc['Price After Discount'];
+          sum += productDoc['Total Price'];
         }
       }
 
-      totalCost.value = sum;
+      if(ordersSnapshot.docs.length==0){
+        totalCost.value = 0;
+      }else{
+        totalCost.value = sum;
+      }
     } catch (e) {
       print("Error: $e");
       showErrorSnackbar("Error fetching total cost: $e");
