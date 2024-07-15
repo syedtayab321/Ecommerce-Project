@@ -17,46 +17,74 @@ Future<void> deleteProduct(String mainCategoryName, String subCategoryName, Stri
 
 
 Future<void> deleteSubCategory(String mainCategoryName, String subCategoryName) async {
-  try{
-    await FirebaseFirestore.instance
+  try {
+    final subCategoryRef = FirebaseFirestore.instance
         .collection('MainCategories')
         .doc(mainCategoryName)
         .collection('subcategories')
-        .doc(subCategoryName)
-        .delete();
-    showSuccessSnackbar('Data deleted sucessfully');
+        .doc(subCategoryName);
+
+    final productsSnapshot = await subCategoryRef.collection('Products').get();
+
+    for (var productDoc in productsSnapshot.docs) {
+      await productDoc.reference.delete();
+    }
+
+    await subCategoryRef.delete();
+
+    showSuccessSnackbar('Data deleted successfully');
     Get.back();
-  }catch(e){
+  } catch (e) {
     showErrorSnackbar(e.toString());
     Get.back();
   }
 }
+
 
 Future<void> deleteCategory(String mainCategoryName) async {
-  try{
-    await FirebaseFirestore.instance
-        .collection('MainCategories')
-        .doc(mainCategoryName)
-        .delete();
-    showSuccessSnackbar('Data deleted sucessfully');
+  try {
+    final mainCategoryRef = FirebaseFirestore.instance.collection('MainCategories').doc(mainCategoryName);
+
+    final subCategoriesSnapshot = await mainCategoryRef.collection('subcategories').get();
+
+    for (var subCategoryDoc in subCategoriesSnapshot.docs) {
+      final subCategoryRef = subCategoryDoc.reference;
+      final productsSnapshot = await subCategoryRef.collection('Products').get();
+      for (var productDoc in productsSnapshot.docs) {
+        await productDoc.reference.delete();
+      }
+      await subCategoryRef.delete();
+    }
+
+    await mainCategoryRef.delete();
+
+    showSuccessSnackbar('Data deleted successfully');
     Get.back();
-  }
-  catch(e){
+  } catch (e) {
+    // Show error message
     showErrorSnackbar(e.toString());
     Get.back();
   }
 }
 
+
 Future<void> deletePersonData(String id) async {
-  try{
-    await FirebaseFirestore.instance
-        .collection('Orders')
-        .doc(id)
-        .delete();
-    showSuccessSnackbar('Data of Person deleted sucessfully');
+  try {
+    final docRef = FirebaseFirestore.instance.collection('Orders').doc(id);
+
+    final subCollectionSnapshot = await docRef.collection('Buyed Products').get();
+
+    for (var subDoc in subCollectionSnapshot.docs) {
+      await subDoc.reference.delete();
+    }
+
+    await docRef.delete();
+
+    // Show success message
+    showSuccessSnackbar('Data of Person deleted successfully');
     Get.back();
-  }
-  catch(e){
+  } catch (e) {
+    showErrorSnackbar(e.toString());
     Get.back();
   }
 }

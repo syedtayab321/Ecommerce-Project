@@ -104,7 +104,7 @@ class ProductDetailsCard extends StatelessWidget {
                                   child: Text(
                                     ProductData['name'],
                                     style: TextStyle(
-                                      fontSize: 20.0,
+                                      fontSize: 17.0,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),

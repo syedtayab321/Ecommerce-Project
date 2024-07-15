@@ -102,17 +102,52 @@ class SubCategoriesPage extends StatelessWidget {
     if (subDocumentsSnapshot.docs.isNotEmpty) {
       Get.dialog(
         AlertDialog(
-          title: Text('Sub Documents'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
+          title: Text(
+            'Sub Documents',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: Container(
-            width: Get.width*2,
+            width: Get.width * 2,
             height: double.maxFinite,
             child: ListView.builder(
               itemCount: subDocumentsSnapshot.docs.length,
               itemBuilder: (context, index) {
                 DocumentSnapshot subDocument = subDocumentsSnapshot.docs[index];
-                return ListTile(
-                    leading:TextWidget(title: (index+1).toString(),size: 20,),
-                    title: TextWidget(title: subDocument.id,size: 20,)
+                String productName = subDocument.id;
+                String imageUrl = subDocument['Image Url'];
+                String price = subDocument['Price'];
+
+                return Card(
+                  elevation: 5,
+                  color: Colors.black87,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(10),
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(imageUrl),
+                      radius: 30,
+                    ),
+                    title: TextWidget(
+                      title: productName,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    trailing: TextWidget(
+                      title: '£$price',
+                      size: 16,
+                      color: Colors.green,
+                      weight: FontWeight.bold,
+                    ),
+                  ),
                 );
               },
             ),
@@ -120,16 +155,24 @@ class SubCategoriesPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Get.back(),
-              child: Text('Close'),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
         barrierDismissible: true,
       );
     } else {
-      showErrorSnackbar('No sub-documents found.');
+      showErrorSnackbar('No Product found.');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

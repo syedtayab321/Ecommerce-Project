@@ -15,12 +15,13 @@ class LoginController extends GetxController {
   final AuthService authService = AuthService();
 
   Future<void> login() async {
-     isLoading.value=false;
-    if(emailController.text!='' && passwordController.text!='')
-      {
-        isLoading.value = true;
+    isLoading.value = false;
+    if (emailController.text != '' && passwordController.text != '') {
+      isLoading.value = true;
+      try {
         User? user = await authService.signIn(emailController.text, passwordController.text);
         if (user != null) {
+          isLoading.value = false;
           await authService.saveUserToPreferences(user.uid);
           String? uid = await authService.getUserFromPreferences();
           UserModel? userModel = await authService.getUserRole(uid!);
@@ -33,15 +34,21 @@ class LoginController extends GetxController {
               Get.off(() => Userdashboard(), transition: Transition.fadeIn, duration: Duration(seconds: 2));
               showSuccessSnackbar('Login Successfully');
             }
+          } else {
+            isLoading.value = false;
+            showErrorSnackbar('User role not found.');
           }
         } else {
           isLoading.value = false;
-          showErrorSnackbar('User is null');
+          showErrorSnackbar('Wrong Credentials');
         }
+      } catch (e) {
+        isLoading.value = false;
+        showErrorSnackbar('Error: Wrong Cridentials');
       }
-    else{
+    } else {
       isLoading.value = false;
-      showErrorSnackbar('Please Fill all the fields first');
+      showErrorSnackbar('Please fill all the fields first');
     }
   }
 }
