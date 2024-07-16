@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 class PersonGridView extends StatelessWidget {
   final SalesSearchController controller = Get.put(SalesSearchController());
   final OrderController orderController = Get.put(OrderController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

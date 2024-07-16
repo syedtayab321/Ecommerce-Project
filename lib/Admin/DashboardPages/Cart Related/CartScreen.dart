@@ -109,18 +109,6 @@ class CartScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              controller: PriceToPayController, // New field for Price to Pay
-              decoration: InputDecoration(
-                labelText: 'Price to Pay',
-                hintText: 'Enter price to pay',
-              ),
-              onChanged: (value) {
-                _counterController.MoneyPaid(value, Totalprice,_counterController.discountedPrice.value);
-              },
-            ),
-            SizedBox(height: 20),
             TextField(
               controller: _discountController,
               keyboardType: TextInputType.number,
@@ -130,6 +118,20 @@ class CartScreen extends StatelessWidget {
               ),
               onChanged: (value) {
                 _counterController.updateDiscount(value, Totalprice);
+                _counterController.PriceRemains.value=0.0;
+                 PriceToPayController.clear();
+              },
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: PriceToPayController, // New field for Price to Pay
+              decoration: InputDecoration(
+                labelText: 'Price to Pay',
+                hintText: 'Enter price to pay',
+              ),
+              onChanged: (value) {
+                _counterController.MoneyPaid(value, Totalprice,_counterController.discountedPrice.value);
               },
             ),
             SizedBox(height: 20),
@@ -214,14 +216,8 @@ class CartScreen extends StatelessWidget {
                               AddressController.text.isNotEmpty &&
                               PriceToPayController.text.isNotEmpty) {
                             var discountprice = _discountController.text.isNotEmpty ? _counterController.discountedPrice.value : Totalprice;
-                            addBuyNow(
-                              NameController.text,
-                              AddressController.text,
-                              discountprice,
-                              _discountController.text,
-                               Totalprice,
-                              _counterController.PricePaid.value,
-                              _counterController.PriceRemains.value,
+                            addBuyNow(NameController.text, AddressController.text, discountprice,
+                              _discountController.text, Totalprice, _counterController.PricePaid.value, _counterController.PriceRemains.value,
                             );
                             NameController.clear();
                             AddressController.clear();

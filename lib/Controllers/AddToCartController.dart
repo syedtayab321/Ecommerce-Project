@@ -9,9 +9,7 @@ class CounterController extends GetxController {
   var PriceRemains=0.0.obs;
 
   void incrementQuantity() {
-    if (quantity.value < 10) {
       quantity.value++;
-    }
   }
 
   void decrementQuantity() {

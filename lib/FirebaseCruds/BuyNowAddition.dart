@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 
 
-Future<void> addBuyNow(String userName, String address, double discountedPrice, String discount,double oldprice,double pricepaid,double Priceremains) async {
+Future<void> addBuyNow(String userName, String address, double discountedPrice, String discount, double oldprice, double pricepaid, double Priceremains) async {
   bool isSuccess = false;
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Cart Data').get();
   List<QueryDocumentSnapshot> docs = snapshot.docs;
@@ -15,7 +15,23 @@ Future<void> addBuyNow(String userName, String address, double discountedPrice, 
     String productId = Uuid().v4();
 
     // Define the fields you want to keep
-    List<String> fieldsToKeep = ['Date', 'Product Name', 'Selected quantity','Total Price']; // Replace with your actual field names
+    List<String> fieldsToKeep = ['Date', 'Product Name', 'Selected quantity', 'Total Price'];
+
+    // Calculate total remaining prices for all documents
+    double totalRemainingPrices = 0;
+    QuerySnapshot ordersSnapshot = await FirebaseFirestore.instance.collection('Orders').doc(userName).collection('Buyed Products').get();
+
+    if(ordersSnapshot.docs.isEmpty){
+      totalRemainingPrices = Priceremains;
+    }else{
+      for (var orderDoc in ordersSnapshot.docs) {
+        Map<String, dynamic> orderData = orderDoc.data() as Map<String, dynamic>;
+        if (orderData['Price Remaining'] != null && orderData['Price Remaining'] > 0) {
+          totalRemainingPrices =orderData['Total Remaining Prices']+ Priceremains;
+          orderData['Total Remaining Prices']=totalRemainingPrices;
+        }
+      }
+    }
 
     for (var doc in docs) {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -31,11 +47,13 @@ Future<void> addBuyNow(String userName, String address, double discountedPrice, 
       filteredData['Product id'] = productId;
       filteredData['User Name'] = userName;
       filteredData['Address'] = address;
-      filteredData['Discount'] =discount;
+      filteredData['Discount'] = discount;
       filteredData['Price Before Discount'] = oldprice;
       filteredData['Price After Discount'] = discountedPrice;
       filteredData['Price Paid'] = pricepaid;
       filteredData['Price Remaining'] = Priceremains;
+      filteredData['Total Remaining Prices'] = totalRemainingPrices; // Add the total remaining prices
+
       await FirebaseFirestore.instance.collection('Orders').doc(userName).collection('Buyed Products').add(filteredData);
     }
 
@@ -55,5 +73,3 @@ Future<void> addBuyNow(String userName, String address, double discountedPrice, 
     Get.back();
   }
 }
-
-
