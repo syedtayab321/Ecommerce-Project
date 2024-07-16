@@ -54,13 +54,18 @@ class InvoiceScreen extends StatelessWidget {
             itemCount: groupedInvoices.keys.length,
             itemBuilder: (context, index) {
               String productId = groupedInvoices.keys.elementAt(index);
-              List<
-                  QueryDocumentSnapshot> idInvoices = groupedInvoices[productId]!;
+              List<QueryDocumentSnapshot> idInvoices = groupedInvoices[productId]!;
 
               double totalCostForId = idInvoices.fold(0, (sum, doc) {
                 productData = doc.data() as Map<String, dynamic>;
                 return sum + (productData['Total Price'] ?? 0);
               });
+
+              double remainingPrice = 0.0;
+              for (var doc in idInvoices) {
+                var productData = doc.data() as Map<String, dynamic>;
+                remainingPrice += (productData['Price Remaining'] ?? 0);
+              }
 
               return Card(
                 color: Colors.black87,
@@ -169,9 +174,7 @@ class InvoiceScreen extends StatelessWidget {
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: idInvoices.length,
                         itemBuilder: (context, index) {
-                          var productData = idInvoices[index].data() as Map<
-                              String,
-                              dynamic>;
+                          var productData = idInvoices[index].data() as Map<String, dynamic>;
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +196,7 @@ class InvoiceScreen extends StatelessWidget {
                                   Spacer(),
                                   TextWidget(
                                     title: '\£${productData['Total Price']
-                                        .toString()}',
+                                        .toStringAsFixed(2)}',
                                     color: Colors.white,
                                     size: 16,
                                   ),
@@ -217,7 +220,7 @@ class InvoiceScreen extends StatelessWidget {
                               Spacer(),
                               TextWidget(
                                 title: '\£${productData['Price Before Discount']
-                                    .toString()}',
+                                    .toStringAsFixed(2)}',
                                 color: Colors.white,
                                 size: 16,
                               ),
@@ -255,6 +258,37 @@ class InvoiceScreen extends StatelessWidget {
                               ),
                             ],
                           ),
+                          Divider(color: Colors.white),
+                          Row(
+                            children: [
+                              TextWidget(
+                                title: 'Price Paid',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              Spacer(),
+                              TextWidget(
+                                title: '\£${productData['Price Paid'].toStringAsFixed(2)}',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              TextWidget(
+                                title: 'Remaining Price',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              Spacer(),
+                              TextWidget(
+                                title: '\£${remainingPrice.toStringAsFixed(2)}',
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                       Divider(color: Colors.white),
@@ -267,22 +301,42 @@ class InvoiceScreen extends StatelessWidget {
                           spacing: 3,
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Elevated_button(
-                            text: 'Generate PDF',
-                            color: Colors.red,
-                            backcolor: Colors.white,
-                            radius: 10,
-                            padding: 10,
-                            width: 120,
-                            height: 40,
-                            path: () {
-                              _generatePdfForInvoice(
-                                  context, idInvoices, userName);
-                            }
-                        ),
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Elevated_button(
+                                text: 'Generate PDF',
+                                color: Colors.red,
+                                backcolor: Colors.white,
+                                radius: 10,
+                                padding: 10,
+                                width: 120,
+                                height: 40,
+                                path: () {
+                                  _generatePdfForInvoice(
+                                      context, idInvoices, userName);
+                                }
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Elevated_button(
+                                text: 'Update Invoice',
+                                color: Colors.white,
+                                backcolor: Colors.green,
+                                radius: 10,
+                                padding: 10,
+                                width: 120,
+                                height: 40,
+                                path: () {
+                                  _showUpdateDialog(context, idInvoices, userName);
+                                }
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -298,287 +352,56 @@ class InvoiceScreen extends StatelessWidget {
               .doc(userName)
               .collection('Buyed Products')
               .get();
-          _generatePdf(context, invoices.docs);
+
+          if (invoices.docs.isNotEmpty) {
+            _generatePdfForInvoice(context, invoices.docs, userName);
+          }
         },
         child: Icon(Icons.picture_as_pdf),
       ),
     );
   }
 
-  void _generatePdfForInvoice(BuildContext context,
-      List<QueryDocumentSnapshot> idInvoices, String userName) async {
+  Future<void> _generatePdfForInvoice(BuildContext context, List<QueryDocumentSnapshot> invoices, String userName) async {
     final pdf = pw.Document();
-    final font = await PdfGoogleFonts.poppinsRegular();
-
-    var productData = idInvoices.first.data() as Map<String, dynamic>;
-    String productId = productData['Product id'];
+    final font = await PdfGoogleFonts.robotoRegular();
 
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
           return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Invoice', style: pw.TextStyle(
-                  fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.Text('Invoice of ' + userName,
+                style: pw.TextStyle(fontSize: 20, font: font),
+              ),
               pw.SizedBox(height: 20),
-              pw.Text('Brand Way Food Ltd', style: pw.TextStyle(
-                  fontSize: 20, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 16),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.start,
-                children: [
-                  pw.Text('Name: ', style: pw.TextStyle(
-                      color: PdfColors.green, fontSize: 18)),
-                  pw.Text(userName, style: pw.TextStyle(fontSize: 18)),
+              pw.TableHelper.fromTextArray(
+                context: context,
+                data: <List<dynamic>>[
+                  <String>['Product Name', 'Quantity', 'Total Price'],
+                  ...invoices.map((doc) {
+                    var productData = doc.data() as Map<String, dynamic>;
+                    return [
+                      productData['Product Name'],
+                      productData['Selected quantity'].toString(),
+                      productData['Total Price'].toStringAsFixed(2),
+                    ];
+                  }).toList()
                 ],
               ),
+              pw.SizedBox(height: 20),
               pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.start,
+                mainAxisAlignment: pw.MainAxisAlignment.end,
                 children: [
-                  pw.Text('Address: ', style: pw.TextStyle(
-                      color: PdfColors.green, fontSize: 18)),
-                  pw.Text(productData['Address'],
-                      style: pw.TextStyle(fontSize: 18)),
-                ],
-              ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.start,
-                children: [
-                  pw.Text('Date: ', style: pw.TextStyle(
-                      color: PdfColors.green, fontSize: 18)),
                   pw.Text(
-                      productData['Date'], style: pw.TextStyle(fontSize: 18)),
+                    'Total Price: \£${invoices.fold<double>(0.0, (double sum, doc) {
+                      var productData = doc.data() as Map<String, dynamic>;
+                      return sum + (productData['Total Price'] ?? 0.0);
+                    }).toStringAsFixed(2)}',
+                    style: pw.TextStyle(fontSize: 16, font: font),
+                  ),
                 ],
               ),
-              pw.SizedBox(height: 10),
-              pw.Column(
-                mainAxisAlignment: pw.MainAxisAlignment.start,
-                children: [
-                  pw.Text('Product Id: ', style: pw.TextStyle(
-                      color: PdfColors.green, fontSize: 18)),
-                  pw.Text(productId, style: pw.TextStyle(fontSize: 15)),
-                ],
-              ),
-              pw.Divider(),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('Product Name', style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('Quantity', style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('Total Price', style: pw.TextStyle(fontSize: 16)),
-                ],
-              ),
-              pw.Divider(),
-              for (var doc in idInvoices)
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('${doc['Product Name']}',
-                        style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('${doc['Selected quantity']}',
-                        style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('\£${doc['Total Price']}',
-                        style: pw.TextStyle(fontSize: 16)),
-                  ],
-                ),
-              pw.Divider(),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('Total Price', style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('\£${productData['Price Before Discount']}',
-                      style: pw.TextStyle(fontSize: 16)),
-                ],
-              ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('Discount', style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('${productData['Discount']}%',
-                      style: pw.TextStyle(fontSize: 16)),
-                ],
-              ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text('Payable Price', style: pw.TextStyle(fontSize: 16)),
-                  pw.Text('\£${productData['Price After Discount']}',
-                      style: pw.TextStyle(fontSize: 16)),
-                ],
-              ),
-              pw.SizedBox(height: 20),
-              pw.Text('Thanks for Shopping!!!!!',
-                  style: pw.TextStyle(fontSize: 20)),
-            ],
-          );
-        },
-      ),
-    );
-
-    await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdf.save());
-  }
-
-  void _generatePdf(BuildContext context,
-      List<QueryDocumentSnapshot> invoices) async {
-    final pdf = pw.Document();
-    final font = await PdfGoogleFonts.poppinsRegular();
-
-    // Group invoices by product ID for the PDF
-    Map<String, List<QueryDocumentSnapshot>> groupedInvoices = {};
-    for (var doc in invoices) {
-      var productData = doc.data() as Map<String, dynamic>;
-      String productId = productData['User Name'];
-
-      if (!groupedInvoices.containsKey(productId)) {
-        groupedInvoices[productId] = [];
-      }
-      groupedInvoices[productId]!.add(doc);
-    }
-
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('Invoice', style: pw.TextStyle(
-                  fontSize: 24, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 20),
-              ...groupedInvoices.entries.map((entry) {
-                String productId = entry.key;
-                List<QueryDocumentSnapshot> idInvoices = entry.value;
-
-                double totalCostForId = idInvoices.fold(0, (sum, doc) {
-                  var productData = doc.data() as Map<String, dynamic>;
-                  return sum + (productData['Total Price'] ?? 0);
-                });
-
-                var productData = idInvoices.first.data() as Map<String,
-                    dynamic>;
-
-                return pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Brand Way Food Ltd',
-                        style: pw.TextStyle(fontSize: 20, fontWeight: pw
-                            .FontWeight.bold)),
-                    pw.SizedBox(height: 16),
-                    pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.start,
-                      children: [
-                        pw.Text('Name: ', style: pw.TextStyle(
-                            color: PdfColors.green, fontSize: 18)),
-                        pw.Text(userName, style: pw.TextStyle(fontSize: 18)),
-                      ],
-                    ),
-                    pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.start,
-                      children: [
-                        pw.Text('Address: ', style: pw.TextStyle(
-                            color: PdfColors.green, fontSize: 18)),
-                        pw.Text(productData['Address'],
-                            style: pw.TextStyle(fontSize: 18)),
-                      ],
-                    ),
-                    pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.start,
-                      children: [
-                        pw.Text('Date: ', style: pw.TextStyle(
-                            color: PdfColors.green, fontSize: 18)),
-                        pw.Text(productData['Date'],
-                            style: pw.TextStyle(fontSize: 18)),
-                      ],
-                    ),
-                    pw.SizedBox(height: 10),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('Product Id: ',
-                            style: pw.TextStyle(fontSize: 18)),
-                        pw.Text(productId, style: pw.TextStyle(fontSize: 15)),
-                      ],
-                    ),
-                    pw.Divider(),
-                    pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.start,
-                      children: [
-                        pw.Text('Product Name',
-                            style: pw.TextStyle(fontSize: 16)),
-                        pw.Spacer(),
-                        pw.Text('Quantity', style: pw.TextStyle(fontSize: 16)),
-                        pw.Spacer(),
-                        pw.Text('Total Price',
-                            style: pw.TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    pw.Divider(),
-                    pw.ListView.builder(
-                      itemCount: idInvoices.length,
-                      itemBuilder: (context, index) {
-                        var productData = idInvoices[index].data() as Map<
-                            String,
-                            dynamic>;
-                        return pw.Row(
-                          children: [
-                            pw.Text('${productData['Product Name']}',
-                                style: pw.TextStyle(fontSize: 16)),
-                            pw.Spacer(),
-                            pw.Text('${productData['Selected quantity']}',
-                                style: pw.TextStyle(fontSize: 16)),
-                            pw.Spacer(),
-                            pw.Text('£${productData['Total Price'].toString()}',
-                                style: pw.TextStyle(fontSize: 16)),
-                          ],
-                        );
-                      },
-                    ),
-                    pw.Divider(),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Row(
-                          children: [
-                            pw.Text('Total Price',
-                                style: pw.TextStyle(fontSize: 16)),
-                            pw.Spacer(),
-                            pw.Text('£${productData['Price Before Discount']
-                                .toString()}',
-                                style: pw.TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                        pw.Row(
-                          children: [
-                            pw.Text(
-                                'Discount', style: pw.TextStyle(fontSize: 16)),
-                            pw.Spacer(),
-                            pw.Text('${productData['Discount'].toString()}\%',
-                                style: pw.TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                        pw.Row(
-                          children: [
-                            pw.Text('Payable Price',
-                                style: pw.TextStyle(fontSize: 16)),
-                            pw.Spacer(),
-                            pw.Text('£${productData['Price After Discount']
-                                .toString()}',
-                                style: pw.TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ],
-                    ),
-                    pw.SizedBox(height: 20),
-                    pw.Padding(
-                      padding: pw.EdgeInsets.all(16.0),
-                      child: pw.Text('Thanks for Shopping',
-                          style: pw.TextStyle(fontSize: 20, fontWeight: pw
-                              .FontWeight.bold)),
-                    ),
-                  ],
-                );
-              }).toList(),
             ],
           );
         },
@@ -587,6 +410,46 @@ class InvoiceScreen extends StatelessWidget {
 
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
+  void _showUpdateDialog(BuildContext context, List<QueryDocumentSnapshot> invoices, String userName) {
+    TextEditingController _controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Update Remaining Price'),
+          content: TextField(
+            controller: _controller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(hintText: 'Enter remaining price to pay'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () async {
+                double remainingPrice = double.parse(_controller.text);
+
+                for (var doc in invoices) {
+                  await doc.reference.update({
+                    'Price Paid': FieldValue.increment(remainingPrice),
+                    'Price Remaining': FieldValue.increment(-remainingPrice),
+                  });
+                }
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

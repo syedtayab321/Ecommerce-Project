@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 
 
-Future<void> addBuyNow(String userName, String address, double discountedPrice, String discount,double oldprice) async {
+Future<void> addBuyNow(String userName, String address, double discountedPrice, String discount,double oldprice,double pricepaid,double Priceremains) async {
   bool isSuccess = false;
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Cart Data').get();
   List<QueryDocumentSnapshot> docs = snapshot.docs;
@@ -34,7 +34,8 @@ Future<void> addBuyNow(String userName, String address, double discountedPrice, 
       filteredData['Discount'] =discount;
       filteredData['Price Before Discount'] = oldprice;
       filteredData['Price After Discount'] = discountedPrice;
-
+      filteredData['Price Paid'] = pricepaid;
+      filteredData['Price Remaining'] = Priceremains;
       await FirebaseFirestore.instance.collection('Orders').doc(userName).collection('Buyed Products').add(filteredData);
     }
 

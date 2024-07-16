@@ -11,6 +11,7 @@ import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartDetailsCar
 class CartScreen extends StatelessWidget {
   TextEditingController NameController = new TextEditingController();
   TextEditingController AddressController = new TextEditingController();
+  TextEditingController PriceToPayController = new TextEditingController(); // New controller
   final TextEditingController _discountController = TextEditingController();
   CounterController _counterController = Get.put(CounterController());
   double Totalprice = 0.0;
@@ -44,7 +45,6 @@ class CartScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final doc = docs[index];
                       final data = doc.data() as Map<String, dynamic>;
-
                       for (int i = 0; i == docs.length; i++) {
                         Totalprice += data['Total Price'];
                       }
@@ -84,70 +84,110 @@ class CartScreen extends StatelessWidget {
   }
 
   void UserDetils() {
-
     Get.dialog(AlertDialog(
       title: Text('Enter User Details'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox(height: 10),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            controller: NameController,
-            decoration: InputDecoration(
-              labelText: 'Username',
-              hintText: 'Enter Name',
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: NameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                hintText: 'Enter Name',
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            controller: AddressController,
-            decoration: InputDecoration(
-              labelText: 'Address',
-              hintText: 'Enter address',
+            SizedBox(height: 20),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: AddressController,
+              decoration: InputDecoration(
+                labelText: 'Address',
+                hintText: 'Enter address',
+              ),
             ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          TextField(
-            controller: _discountController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: 'Enter Discount (%)',
-              border: OutlineInputBorder(),
+            SizedBox(height: 20),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: PriceToPayController, // New field for Price to Pay
+              decoration: InputDecoration(
+                labelText: 'Price to Pay',
+                hintText: 'Enter price to pay',
+              ),
+              onChanged: (value) {
+                _counterController.MoneyPaid(value, Totalprice,_counterController.discountedPrice.value);
+              },
             ),
-            onChanged: (value) {
-              _counterController.updateDiscount(value,Totalprice);
-            },
-          ),
-          SizedBox(height: 20,),
-          Obx(() {
-            return _counterController.isLoading.value
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Column(
-                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+            SizedBox(height: 20),
+            TextField(
+              controller: _discountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Enter Discount (%)',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                _counterController.updateDiscount(value, Totalprice);
+              },
+            ),
+            SizedBox(height: 20),
+            Obx(() {
+              return _counterController.isLoading.value
+                  ? Center(
+                child: CircularProgressIndicator(),
+              )
+                  : Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextWidget(title:'Price Before Discount   ',size: 17,),
-                      TextWidget(title: Totalprice.toStringAsFixed(2),size: 17,color: Colors.red,),
+                      TextWidget(
+                        title: 'Price Before Discount   ',
+                        size: 17,
+                      ),
+                      TextWidget(
+                        title: Totalprice.toStringAsFixed(2),
+                        size: 17,
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextWidget(
+                        title: 'Price After Discount ',
+                        size: 17,
+                      ),
+                      TextWidget(
+                        title: _counterController.discountedPrice.value
+                            .toStringAsFixed(2),
+                        size: 17,
+                        color: Colors.red,
+                      ),
                     ],
                   ),
                   SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
-                      TextWidget(title:'Price After Discount ',size: 17,),
-                      TextWidget(title:_counterController.discountedPrice.value.toStringAsFixed(2),size: 17,color: Colors.red),
+                      TextWidget(
+                        title: 'Price Remains',
+                        size: 17,
+                      ),
+                      TextWidget(
+                        title:_counterController.PriceRemains.value
+                            .toStringAsFixed(2),
+                        size: 17,
+                        color: Colors.red,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -156,8 +196,9 @@ class CartScreen extends StatelessWidget {
                           Get.back();
                           NameController.clear();
                           AddressController.clear();
+                          PriceToPayController.clear(); // Clear the new field
                           _discountController.clear();
-                          _counterController.discountedPrice.value=Totalprice;
+                          _counterController.discountedPrice.value = Totalprice;
                         },
                         text: 'Cancel',
                         padding: 10,
@@ -169,22 +210,28 @@ class CartScreen extends StatelessWidget {
                       ),
                       Elevated_button(
                         path: () {
-                          if(NameController.text.isNotEmpty && AddressController.text.isNotEmpty)
-                          {
-                            var discountprice=_discountController.text.isNotEmpty?_counterController.discountedPrice.value:Totalprice;
-                               addBuyNow(
-                                   NameController.text, AddressController.text,
-                                   discountprice,_discountController.text,
-                                 Totalprice,
-                               );
-                               NameController.clear();
-                               AddressController.clear();
-                               _discountController.clear();
-                               _counterController.discountedPrice.value=Totalprice;
-                               Get.back();
-                          }
-                          else{
-                            showErrorSnackbar('Name and address both are required');
+                          if (NameController.text.isNotEmpty &&
+                              AddressController.text.isNotEmpty &&
+                              PriceToPayController.text.isNotEmpty) {
+                            var discountprice = _discountController.text.isNotEmpty ? _counterController.discountedPrice.value : Totalprice;
+                            addBuyNow(
+                              NameController.text,
+                              AddressController.text,
+                              discountprice,
+                              _discountController.text,
+                               Totalprice,
+                              _counterController.PricePaid.value,
+                              _counterController.PriceRemains.value,
+                            );
+                            NameController.clear();
+                            AddressController.clear();
+                            PriceToPayController.clear();
+                            _discountController.clear();
+                            _counterController.discountedPrice.value = Totalprice;
+                            Get.back();
+                          } else {
+                            showErrorSnackbar(
+                                'Name, address, and price to pay are required');
                           }
                         },
                         text: 'Confirm',
@@ -198,9 +245,10 @@ class CartScreen extends StatelessWidget {
                     ],
                   ),
                 ],
-            );
-          }),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     ));
   }

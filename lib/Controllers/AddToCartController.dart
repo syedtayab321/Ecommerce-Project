@@ -5,6 +5,9 @@ class CounterController extends GetxController {
   var discount = 0.0.obs;
   var isLoading = false.obs;
   var discountedPrice=0.0.obs;
+  var PricePaid=0.0.obs;
+  var PriceRemains=0.0.obs;
+
   void incrementQuantity() {
     if (quantity.value < 10) {
       quantity.value++;
@@ -22,6 +25,16 @@ class CounterController extends GetxController {
     discountedPrice.value = Totalprice - (Totalprice * (discount.value / 100));
   }
 
+  void MoneyPaid(String value,double Totalprice,double discountedprice)
+  {
+     PricePaid.value=value.isEmpty?Totalprice:double.parse(value);
+     if(discountedprice==0.0){
+       PriceRemains.value=Totalprice-PricePaid.value;
+     }
+     else if(discountedprice!=0.0){
+       PriceRemains.value=discountedprice-PricePaid.value;
+     }
+  }
   void setLoading(bool value) {
     isLoading.value = value;
   }
