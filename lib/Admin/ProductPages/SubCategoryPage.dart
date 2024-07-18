@@ -9,18 +9,33 @@ import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SubCategoriesPage extends StatelessWidget {
+class SubCategoriesPage extends StatefulWidget {
   final String Productname;
-  TextEditingController _productnameController = new TextEditingController();
+
   SubCategoriesPage({required this.Productname});
+
+  @override
+  State<SubCategoriesPage> createState() => _SubCategoriesPageState();
+}
+
+class _SubCategoriesPageState extends State<SubCategoriesPage> {
+  TextEditingController _productnameController = new TextEditingController();
+
   final RxBool isLoading = false.obs;
 
   final SearchController searchController = Get.put(SearchController());
 
+  @override
+  void initState() {
+    super.initState();
+    // Reset the search query when the page is initialized
+    searchController.clearQuery();
+  }
+
   void SubCategoryAdd() async {
     isLoading.value = true;
     try {
-      await addSubCategory(Productname, _productnameController.text);
+      await addSubCategory(widget.Productname, _productnameController.text);
       showSuccessSnackbar("Data saved successfully");
       Get.back();
       _productnameController.clear();
@@ -92,7 +107,7 @@ class SubCategoriesPage extends StatelessWidget {
   void showSubDocuments(BuildContext context, String subCategory) async {
     QuerySnapshot subDocumentsSnapshot = await FirebaseFirestore.instance
         .collection('MainCategories')
-        .doc(Productname)
+        .doc(widget.Productname)
         .collection('subcategories')
         .doc(subCategory)
         .collection('Products')
@@ -172,13 +187,12 @@ class SubCategoriesPage extends StatelessWidget {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: TextWidget(
-          title: '${this.Productname}',
+          title: '${this.widget.Productname}',
         ),
         actions: [
           Padding(
@@ -226,7 +240,7 @@ class SubCategoriesPage extends StatelessWidget {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('MainCategories')
-                  .doc(this.Productname)
+                  .doc(this.widget.Productname)
                   .collection('subcategories')
                   .snapshots(),
               builder: (BuildContext context,
@@ -252,8 +266,7 @@ class SubCategoriesPage extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: filteredSubCategories.length,
                         itemBuilder: (context, index) {
-                          DocumentSnapshot category =
-                          filteredSubCategories[index];
+                          DocumentSnapshot category = filteredSubCategories[index];
                           return ListTileWidget(
                             title: category.id,
                             leadicon: Icons.cookie,
@@ -263,11 +276,11 @@ class SubCategoriesPage extends StatelessWidget {
                                 },
                                 icon: Icon(Icons.expand_circle_down,color: Colors.white,)
                             ) ,
-                            MainCategory: this.Productname,
+                            MainCategory: this.widget.Productname,
                             onIconPressed: () {
                               Get.to(
                                 ProductDetailsCard(
-                                  MainCategory: this.Productname,
+                                  MainCategory: this.widget.Productname,
                                   SubCategory: category.id,
                                 ),
                               );
@@ -293,4 +306,9 @@ class SearchController extends GetxController {
   void updateQuery(String newQuery) {
     query.value = newQuery;
   }
+
+  void clearQuery() {
+    query.value = '';
+  }
 }
+

@@ -383,227 +383,106 @@ class InvoiceScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _generatePdfForAllInvoices(context, invoices, userName);
-        },
-        child: Icon(Icons.picture_as_pdf),
-      ),
     );
   }
 
-  Future<void> _generatePdfForInvoice(BuildContext context,
-      List<QueryDocumentSnapshot> idInvoices, String userName) async {
+  Future<void> _generatePdfForInvoice(BuildContext context, List<QueryDocumentSnapshot> idInvoices, String userName) async {
     final pdf = pw.Document();
-    for (var doc in idInvoices) {
-      var productData = doc.data() as Map<String, dynamic>;
+    var productData = idInvoices.first.data() as Map<String, dynamic>;
 
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                    'Brand Way Food Ltd', style: pw.TextStyle(fontSize: 20)),
-                pw.Text(
-                    'Invoice of $userName', style: pw.TextStyle(fontSize: 18)),
-                pw.SizedBox(height: 10),
-                pw.Text('Date: ${productData['Date']}'),
-                pw.Text('Address: ${productData['Address']}'),
-                pw.SizedBox(height: 10),
-                pw.Text('Product Id: ${productData['Product id']}'),
-                pw.SizedBox(height: 10),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Product Name'),
-                    pw.Text('Quantity'),
-                    pw.Text('Total Price'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.ListView.builder(
-                  itemCount: idInvoices.length,
-                  itemBuilder: (context, index) {
-                    var productData = idInvoices[index].data() as Map<
-                        String,
-                        dynamic>;
-                    return pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Text('${productData['Product Name']}'),
-                        pw.Text('${productData['Selected quantity']}'),
-                        pw.Text('£${productData['Total Price'].toStringAsFixed(
-                            2)}'),
-                      ],
-                    );
-                  },
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Total Price'),
-                    pw.Text('£${productData['Price Before Discount']
-                        .toStringAsFixed(2)}'),
-                  ],
-                ),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Discount'),
-                    pw.Text('${productData['Discount'].toString()}%'),
-                  ],
-                ),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Payable Price'),
-                    pw.Text(
-                        '£${productData['Price After Discount'].toString()}'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Price Paid'),
-                    pw.Text('£${productData['Price Paid'].toStringAsFixed(2)}'),
-                  ],
-                ),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Remaining Price'),
-                    pw.Text('£${productData['Price Remaining'].toStringAsFixed(
-                        2)}'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Totall All Remaining Price'),
-                    pw.Text('£${productData['Total Remaining Prices']
-                        .toStringAsFixed(
-                        2)}'),
-                  ],
-                ),
-                pw.Text('24-23 Barretts Green Road London, NW 10 7AE\ninfo@brandwaygroup.uk \n+442089617367',
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Brand Way Food Ltd', style: pw.TextStyle(fontSize: 20)),
+              pw.Text('Invoice of $userName', style: pw.TextStyle(fontSize: 18)),
+              pw.SizedBox(height: 10),
+              pw.Text('Date: ${productData['Date']}'),
+              pw.Text('Address: ${productData['Address']}'),
+              pw.SizedBox(height: 10),
+              pw.Text('Product Id: ${productData['Product id']}'),
+              pw.SizedBox(height: 10),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Product Name'),
+                  pw.Text('Quantity'),
+                  pw.Text('Total Price'),
+                ],
+              ),
+              pw.Divider(),
+              pw.Column(
+                children: idInvoices.map((doc) {
+                  var productData = doc.data() as Map<String, dynamic>;
+                  return pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('${productData['Product Name']}'),
+                      pw.Text('${productData['Selected quantity']}'),
+                      pw.Text('£${productData['Total Price'].toStringAsFixed(2)}'),
+                    ],
+                  );
+                }).toList(),
+              ),
+              pw.Divider(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Total Price'),
+                  pw.Text('£${productData['Price Before Discount'].toStringAsFixed(2)}'),
+                ],
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Discount'),
+                  pw.Text('${productData['Discount'].toString()}%'),
+                ],
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Payable Price'),
+                  pw.Text('£${productData['Price After Discount'].toString()}'),
+                ],
+              ),
+              pw.Divider(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Price Paid'),
+                  pw.Text('£${productData['Price Paid'].toStringAsFixed(2)}'),
+                ],
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Remaining Price'),
+                  pw.Text('£${productData['Price Remaining'].toStringAsFixed(2)}'),
+                ],
+              ),
+              pw.Divider(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Total All Remaining Price'),
+                  pw.Text('£${productData['Total Remaining Prices'].toStringAsFixed(2)}'),
+                ],
+              ),
+              pw.Divider(),
+              pw.Center(
+                child: pw.Text('24-23 Barretts Green Road London, NW 10 7AE\ninfo@brandwaygroup.uk \n+442089617367',
                     style: pw.TextStyle(fontSize: 20)),
-              ],
-            );
-          },
-        ),
-      );
-    }
+              ),
+            ],
+          );
+        },
+      ),
+    );
 
-    await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdf.save());
-  }
-
-  Future<void> _generatePdfForAllInvoices(BuildContext context,
-      List<QueryDocumentSnapshot> invoices, String userName) async {
-    final pdf = pw.Document();
-    for (var doc in invoices) {
-      var productData = doc.data() as Map<String, dynamic>;
-
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                    'Brand Way Food Ltd', style: pw.TextStyle(fontSize: 20)),
-                pw.Text(
-                    'Invoice of $userName', style: pw.TextStyle(fontSize: 18)),
-                pw.SizedBox(height: 10),
-                pw.Text('Date: ${productData['Date']}'),
-                pw.Text('Address: ${productData['Address']}'),
-                pw.SizedBox(height: 10),
-                pw.Text('Product Id: ${productData['Product id']}'),
-                pw.SizedBox(height: 10),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Product Name'),
-                    pw.Text('Quantity'),
-                    pw.Text('Total Price'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('${productData['Product Name']}'),
-                    pw.Text('${productData['Selected quantity']}'),
-                    pw.Text(
-                        '£${productData['Total Price'].toStringAsFixed(2)}'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Total Price'),
-                    pw.Text('£${productData['Price Before Discount']
-                        .toStringAsFixed(2)}'),
-                  ],
-                ),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Discount'),
-                    pw.Text('${productData['Discount'].toString()}%'),
-                  ],
-                ),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Payable Price'),
-                    pw.Text(
-                        '£${productData['Price After Discount'].toString()}'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Price Paid'),
-                    pw.Text('£${productData['Price Paid'].toStringAsFixed(2)}'),
-                  ],
-                ),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Remaining Price'),
-                    pw.Text('£${productData['Price Remaining'].toStringAsFixed(
-                        2)}'),
-                  ],
-                ),
-                pw.Divider(),
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Text('Totall All Remaining Price'),
-                    pw.Text('£${productData['Total Remaining Prices']
-                        .toStringAsFixed(
-                        2)}'),
-                  ],
-                ),
-                pw.Text('24-23 Barretts Green Road London, NW 10 7AE\ninfo@brandwaygroup.uk \n+442089617367',
-                    style: pw.TextStyle(fontSize: 20)),
-              ],
-            );
-          },
-        ),
-      );
-    }
-
-    await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdf.save());
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
   }
 
   void _showUpdateDialog(BuildContext context,
