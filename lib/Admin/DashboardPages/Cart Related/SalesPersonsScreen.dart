@@ -38,7 +38,7 @@ class PersonGridView extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Enter CNIC to search',
+                    hintText: 'Enter Name to search',
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),

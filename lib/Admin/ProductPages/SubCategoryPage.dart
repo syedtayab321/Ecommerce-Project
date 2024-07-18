@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/ProductPages/ProductDetailCard.dart';
-import 'package:ecommerce_app/Controllers/ImageController.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryAddition.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ListTileWidget.dart';
