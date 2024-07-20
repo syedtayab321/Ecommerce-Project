@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartScreen.dart';
 import 'package:ecommerce_app/Admin/ProductPages/AddtoCartQuery.dart';
 import 'package:ecommerce_app/Admin/ProductPages/ProductUpdate.dart';
+import 'package:ecommerce_app/Controllers/ImageController.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/ProductDialog.dart';
@@ -20,8 +21,12 @@ class ProductDetailsCard extends StatelessWidget {
   ProductDetailsCard({
     Key? key,
     required this.MainCategory,
-    required this.SubCategory,this.userName, this.address,this.userid
+    required this.SubCategory,
+    this.userName,
+    this.address,
+    this.userid,
   }) : super(key: key);
+  final ImagePickerController imageController = Get.put(ImagePickerController());
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +36,15 @@ class ProductDetailsCard extends StatelessWidget {
           title: SubCategory,
         ),
         actions: [
-          IconButton(onPressed: (){
-            Get.to(userName==null?CartScreen(userName: userName,userid: userid,address: address,):CartScreen());
-          }, icon: Icon(Icons.add_shopping_cart)),
-          SizedBox(width: 20,),
+          IconButton(
+            onPressed: () {
+              Get.to(userName == null
+                  ? CartScreen(userName: userName, userid: userid, address: address)
+                  : CartScreen());
+            },
+            icon: Icon(Icons.add_shopping_cart),
+          ),
+          SizedBox(width: 20),
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: Elevated_button(
@@ -86,147 +96,123 @@ class ProductDetailsCard extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-                            child: Image.network(
-                              ProductData['Image Url'],
-                              fit: BoxFit.contain,
-                              height: 350,
-                              width: Get.width,
-                            ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            ProductData['Image Url'],
+                            fit: BoxFit.cover,
+                            height: 550,
+                            width: double.infinity,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    ProductData['name'],
-                                    style: TextStyle(
-                                      fontSize: 17.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 8.0),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '£${price.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.0),
-                                    Text(
-                                      stock <= 0 ? 'Out of Stock' : 'Stock: $stock',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: stock > 0 ? Colors.white : Colors.red,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          ProductData['name'],
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextWidget(
-                                  title: 'Expiry Date',
-                                  color: Colors.white,
-                                  size: 17,
-                                ),
-                                TextWidget(
-                                  title: '${ProductData['ExpiryDate']}',
-                                  color: Colors.white,
-                                  size: 17,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 6.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Elevated_button(
-                                path: () {
-                                  showUpdateProductSheet(context, MainCategory, SubCategory, ProductData);
-                                },
-                                color: Colors.green,
-                                text: 'Update',
-                                radius: 7,
-                                padding: 10,
-                                width: 100,
-                                height: 40,
-                                backcolor: Colors.white,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              stock <= 0 ? 'Out of Stock' : 'Stock:  $stock',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                color: stock > 0 ? Colors.white : Colors.red,
+                                fontWeight: FontWeight.w600,
                               ),
-                              Elevated_button(
-                                path: () {
-                                  stock <= 0
-                                      ? showErrorSnackbar('Product is out of stock')
-                                      : Get.dialog(QuantitySelector(
-                                    priceperitem: price,
-                                    categoryName: SubCategory,
-                                    stock: stock,
-                                    MainCategory: MainCategory,
-                                    ProductName: ProductData['name'],
-                                    userName: this.userName,
-                                    userid: this.userid,
-                                    address: this.address,
-                                  ));
-                                },
+                            ),
+                            Spacer(),
+                            Text(
+                              'Price:  £${price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 18.0,
                                 color: Colors.white,
-                                text: 'Add to cart',
-                                radius: 10,
-                                padding: 10,
-                                width: 110,
-                                height: 40,
-                                backcolor: Colors.green,
+                                fontWeight: FontWeight.w600,
                               ),
-                              Elevated_button(
-                                path: () {
-                                  Get.dialog(ConfirmDialog(
-                                    title: 'Delete',
-                                    content: 'Are You Sure You want to Delete',
-                                    confirmText: 'Confirm',
-                                    cancelText: 'Cancel',
-                                    confirmColor: Colors.red,
-                                    cancelColor: Colors.green,
-                                    onConfirm: () {
-                                      deleteProduct(MainCategory, SubCategory, ProductData['name']);
-                                      Get.back();
-                                    },
-                                    onCancel: () {
-                                      Get.back();
-                                    },
-                                  ));
-                                },
-                                color: Colors.white,
-                                text: 'Delete',
-                                radius: 7,
-                                padding: 10,
-                                width: 100,
-                                height: 40,
-                                backcolor: Colors.red,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4.0),
+                        TextWidget(
+                          title: 'Expiry Date: ${ProductData['ExpiryDate']}',
+                          color: Colors.white,
+                          size: 17,
+                        ),
+                        SizedBox(height: 12.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Elevated_button(
+                              path: () {
+                                imageController.imagedata.value = null;
+                                showUpdateProductSheet(context, MainCategory, SubCategory, ProductData);
+                              },
+                              color: Colors.green,
+                              text: 'Update',
+                              radius: 7,
+                              padding: 10,
+                              width: 100,
+                              height: 40,
+                              backcolor: Colors.white,
+                            ),
+                            Elevated_button(
+                              path: () {
+                                stock <= 0
+                                    ? showErrorSnackbar('Product is out of stock')
+                                    : Get.dialog(QuantitySelector(
+                                  priceperitem: price,
+                                  categoryName: SubCategory,
+                                  stock: stock,
+                                  MainCategory: MainCategory,
+                                  ProductName: ProductData['name'],
+                                  userName: this.userName,
+                                  userid: this.userid,
+                                  address: this.address,
+                                ));
+                              },
+                              color: Colors.white,
+                              text: 'Add to cart',
+                              radius: 10,
+                              padding: 10,
+                              width: 110,
+                              height: 40,
+                              backcolor: Colors.green,
+                            ),
+                            Elevated_button(
+                              path: () {
+                                Get.dialog(ConfirmDialog(
+                                  title: 'Delete',
+                                  content: 'Are You Sure You want to Delete',
+                                  confirmText: 'Confirm',
+                                  cancelText: 'Cancel',
+                                  confirmColor: Colors.red,
+                                  cancelColor: Colors.green,
+                                  onConfirm: () {
+                                    deleteProduct(MainCategory, SubCategory, ProductData['name']);
+                                    Get.back();
+                                  },
+                                  onCancel: () {
+                                    Get.back();
+                                  },
+                                ));
+                              },
+                              color: Colors.white,
+                              text: 'Delete',
+                              radius: 7,
+                              padding: 10,
+                              width: 100,
+                              height: 40,
+                              backcolor: Colors.red,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 );

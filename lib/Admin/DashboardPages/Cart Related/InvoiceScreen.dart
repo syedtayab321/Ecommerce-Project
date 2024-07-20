@@ -406,7 +406,7 @@ class InvoiceScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(6.0),
                         child: TextWidget(
-                          title: 'Address:    24-23 Barretts Green Road London, NW 10 7AE\nEmail:    info@brandwaygroup.uk \nMobile No:    +442089617367',
+                          title: 'Thanks For shopping',
                           color: Colors.white,
                           size: 16,
                         ),
@@ -549,13 +549,9 @@ class InvoiceScreen extends StatelessWidget {
                 ],
               ),
               pw.Divider(),
-              pw.SizedBox(height: 20),
+              pw.SizedBox(height: 30),
               pw.Center(
-                child: pw.Text('Details',
-                    style: pw.TextStyle(fontSize: 20)),
-              ),
-              pw.Center(
-                child: pw.Text('24-23 Barretts Green Road London, NW 10 7AE\ninfo@brandwaygroup.uk \n+442089617367',
+                child: pw.Text('Thanks For Shopping',
                     style: pw.TextStyle(fontSize: 20)),
               ),
             ],

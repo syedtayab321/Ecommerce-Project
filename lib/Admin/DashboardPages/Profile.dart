@@ -45,7 +45,7 @@ class ProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             TextWidget(
-              title: 'admin321@gmail.com',
+              title: 'brandway321@gmail.com',
               size: 18,
               color: Colors.grey[700],
             ),

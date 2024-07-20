@@ -163,7 +163,6 @@ class Userdashboard extends StatelessWidget {
             return Expanded(
               child: GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: Get.width / (Get.height / 1.8),
