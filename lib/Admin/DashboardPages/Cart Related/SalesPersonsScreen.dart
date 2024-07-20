@@ -19,7 +19,7 @@ class PersonGridView extends StatelessWidget {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.black87,
         title: TextWidget(
-          title: 'Sales',color: Colors.white,
+          title: 'Sales', color: Colors.white,
         ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(100.0),
@@ -29,8 +29,8 @@ class PersonGridView extends StatelessWidget {
               Center(
                 child: Obx(() {
                   return TextWidget(
-                    title:'Total sales cost: \£${orderController.totalCost.value.toStringAsFixed(2)}',
-                    size: 24,color: Colors.white,
+                    title: 'Total sales cost: \£${orderController.totalCost.value.toStringAsFixed(2)}',
+                    size: 24, color: Colors.white,
                   );
                 }),
               ),
@@ -38,7 +38,7 @@ class PersonGridView extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Enter Name to search',
+                    hintText: 'Enter Name or ID to search',
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -59,7 +59,7 @@ class PersonGridView extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.orders.isEmpty) {
-          return Center(child:Text('No documents found') );
+          return Center(child: Text('No documents found'));
         }
 
         if (controller.filteredOrders.isEmpty) {
@@ -77,12 +77,15 @@ class PersonGridView extends StatelessWidget {
           padding: EdgeInsets.all(10.0),
           itemBuilder: (context, index) {
             DocumentSnapshot category = controller.filteredOrders[index];
-              orderController.fetchAndCalculateTotalCost();
+            final data = category.data() as Map<String, dynamic>;
+            final userId = data['userid'] ?? 'Unknown';
+            final userName = category.id;
+            orderController.fetchAndCalculateTotalCost();
             return Stack(
               children: [
                 GestureDetector(
                   onTap: () {
-                    Get.to(InvoiceScreen(userName: category.id));
+                    Get.to(InvoiceScreen(userName: userName));
                   },
                   child: Container(
                     width: Get.width,
@@ -92,7 +95,7 @@ class PersonGridView extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(12.0),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
@@ -111,7 +114,7 @@ class PersonGridView extends StatelessWidget {
                         ),
                         SizedBox(height: 10.0),
                         Text(
-                          'User Name : ${category.id}',
+                          'UserName:  $userName\nUser Id:  $userId',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.0,
@@ -127,23 +130,27 @@ class PersonGridView extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: IconButton(
                     onPressed: () {
-                      Get.dialog(ConfirmDialog(
+                      Get.dialog(
+                        ConfirmDialog(
                           title: 'Delete',
-                          content: 'Are you sure you want to delete ',
+                          content: 'Are you sure you want to delete?',
                           confirmText: 'Delete',
                           cancelText: 'Cancel',
                           confirmColor: Colors.red,
                           cancelColor: Colors.black87,
-                          onConfirm: (){
-                            deletePersonData(category.id);
+                          onConfirm: () {
+                            deletePersonData(userName);
                             Get.back();
                           },
-                          onCancel: (){
+                          onCancel: () {
                             Get.back();
                           },
-                      ),
+                        ),
                       );
-                    }, icon: Icon(Icons.delete_forever),color: Colors.red,),
+                    },
+                    icon: Icon(Icons.delete_forever),
+                    color: Colors.red,
+                  ),
                 ),
               ],
             );

@@ -1,6 +1,5 @@
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Elevated_button extends StatelessWidget {
  final String text;

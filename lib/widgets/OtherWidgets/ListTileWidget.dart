@@ -24,68 +24,58 @@ class ListTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = Get.width;
 
-    return InkWell(
-      onTap: (){
-        Get.to(
-          ProductDetailsCard(
-              MainCategory: this.MainCategory,
-              SubCategory: this.title,
-          ),
-        );
-      },
-      child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        elevation: 8.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black87,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(screenWidth * 0.03),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(25.0),
-                  child: Icon(leadicon,size:50,color: Colors.white,),
-                ),
-                SizedBox(width: screenWidth * 0.05),
-                Expanded(
-                  child: TextWidget(
-                    title: title,
-                    size: 17,
-                    color: Colors.white,
-                  )
-                ),
-                IconButton(
-                  icon: icon,
-                  onPressed: onIconPressed,
-                  splashRadius: 24.0,
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: (){
-                    Get.dialog(ConfirmDialog(
-                      title: 'Delete Category',
-                      content: 'Warning:All Data Inside this Category will be Deleted',
-                      confirmText: 'Delete',
-                      cancelText: 'Cancel',
-                      confirmColor: Colors.red,
-                      cancelColor: Colors.green,
-                      onConfirm: (){
-                        deleteSubCategory(this.MainCategory, this.title);
-                        Get.back();
-                      },
-                    ),
-                    );
-                  },
-                  splashRadius: 24.0,
-                ),
-              ],
-            ),
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.03),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(25.0),
+                child: Icon(leadicon,size:50,color: Colors.white,),
+              ),
+              SizedBox(width: screenWidth * 0.05),
+              Expanded(
+                child: TextWidget(
+                  title: title,
+                  size: 17,
+                  color: Colors.white,
+                )
+              ),
+              IconButton(
+                icon: icon,
+                onPressed: onIconPressed,
+                splashRadius: 24.0,
+              ),
+              IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: (){
+                  Get.dialog(ConfirmDialog(
+                    title: 'Delete Category',
+                    content: 'Warning:All Data Inside this Category will be Deleted',
+                    confirmText: 'Delete',
+                    cancelText: 'Cancel',
+                    confirmColor: Colors.red,
+                    cancelColor: Colors.green,
+                    onConfirm: (){
+                      deleteSubCategory(this.MainCategory, this.title);
+                      Get.back();
+                    },
+                  ),
+                  );
+                },
+                splashRadius: 24.0,
+              ),
+            ],
           ),
         ),
       ),

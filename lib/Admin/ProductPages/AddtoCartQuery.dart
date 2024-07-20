@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartScreen.dart';
 import 'package:ecommerce_app/Controllers/AddToCartController.dart';
 import 'package:ecommerce_app/FirebaseCruds/CategoryAddition.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
@@ -11,15 +12,20 @@ class QuantitySelector extends StatelessWidget {
   int stock;
   var totalprice, quantity_buy, remainingquantity, discountedPrice;
   String categoryName, MainCategory, ProductName;
+  final String? userName;
+  final String? address;
+  final String? userid;
   QuantitySelector({
     required this.priceperitem,
     required this.categoryName,
     required this.stock,
     required this.MainCategory,
     required this.ProductName,
+    this.userName, this.address,this.userid,
   });
 
   final CounterController _counterController = Get.put(CounterController());
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +36,9 @@ class QuantitySelector extends StatelessWidget {
         weight: FontWeight.bold,
       ),
       content: Obx(() {
+        _textEditingController.text = _counterController.quantity.value.toString();
         return _counterController.isLoading.value
-            ? Center(
-          child: CircularProgressIndicator(),
-        )
+            ? Center(child: CircularProgressIndicator())
             : Container(
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
@@ -49,25 +54,33 @@ class QuantitySelector extends StatelessWidget {
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 16.0),
-                Obx(() {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.remove),
-                        onPressed: _counterController.decrementQuantity,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: _counterController.decrementQuantity,
+                    ),
+                    SizedBox(
+                      width: 50,
+                      child: TextField(
+                        controller: _textEditingController,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        onChanged: (value) {
+                          int? quantity = int.tryParse(value);
+                          if (quantity != null) {
+                            _counterController.setQuantity(quantity);
+                          }
+                        },
                       ),
-                      Text(
-                        '${_counterController.quantity}',
-                        style: TextStyle(fontSize: 20.0),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: _counterController.incrementQuantity,
-                      ),
-                    ],
-                  );
-                }),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _counterController.incrementQuantity,
+                    ),
+                  ],
+                ),
                 SizedBox(height: 16.0),
                 Obx(() {
                   totalprice = _counterController.quantity.value * priceperitem;
@@ -83,7 +96,7 @@ class QuantitySelector extends StatelessWidget {
                       ),
                     ],
                   );
-                })
+                }),
               ],
             ),
           ),
@@ -103,22 +116,51 @@ class QuantitySelector extends StatelessWidget {
           text: 'Add to CART',
           color: Colors.white,
           path: () async {
-            _counterController.setLoading(true);
-            await addtoCart(
-              this.categoryName,
-              this.totalprice,
-              this.quantity_buy,
-              this.remainingquantity,
-              this.MainCategory,
-              this.ProductName,
-              this.priceperitem,
-            ).then((value) {
-              showSuccessSnackbar('Product added to cart successfully');
-            }).catchError((error) {
-              showErrorSnackbar('Failed to add product to cart: $error');
-            }).whenComplete(() {
-              _counterController.setLoading(false);
-            });
+            if(userName==null || userid==null || address==null){
+              if (_counterController.quantity.value > stock) {
+                showErrorSnackbar('Quantity exceeds available stock.');
+                return;
+              }
+              _counterController.setLoading(true);
+              await addtoCart(
+                this.categoryName,
+                this.totalprice,
+                this.quantity_buy,
+                this.remainingquantity,
+                this.MainCategory,
+                this.ProductName,
+                this.priceperitem,
+              ).then((value) {
+                showSuccessSnackbar('Product added to cart successfully');
+              }).catchError((error) {
+                showErrorSnackbar('Failed to add product to cart: $error');
+              }).whenComplete(() {
+                _counterController.setLoading(false);
+              });
+            }
+            else{
+              if (_counterController.quantity.value > stock) {
+                showErrorSnackbar('Quantity exceeds available stock.');
+                return;
+              }
+              _counterController.setLoading(true);
+              await addtoCart(
+                this.categoryName,
+                this.totalprice,
+                this.quantity_buy,
+                this.remainingquantity,
+                this.MainCategory,
+                this.ProductName,
+                this.priceperitem,
+              ).then((value) {
+                showSuccessSnackbar('Product added to cart for this person');
+              }).catchError((error) {
+                showErrorSnackbar('Failed to add product to cart: $error');
+              }).whenComplete(() {
+                Get.to(CartScreen(userName: userName,userid: userid,address: address,));
+                _counterController.setLoading(false);
+              });
+            }
           },
           radius: 10,
           width: 130,

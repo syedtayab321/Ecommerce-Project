@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 class SalesSearchController extends GetxController {
   var searchQuery = "".obs;
   var orders = <QueryDocumentSnapshot>[].obs;
-
   @override
   void onInit() {
     super.onInit();
@@ -17,7 +16,12 @@ class SalesSearchController extends GetxController {
     if (searchQuery.isEmpty) {
       return orders;
     } else {
-      return orders.where((doc) => doc.id.contains(searchQuery.value)).toList();
+      return orders.where((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final name = data['username']?.toLowerCase() ?? '';
+        final id = data['userid'].toLowerCase();
+        return name.contains(searchQuery.value.toLowerCase()) || id.contains(searchQuery.value.toLowerCase());
+      }).toList();
     }
   }
 }

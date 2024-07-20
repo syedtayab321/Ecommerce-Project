@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/Admin/ProductPages/SubCategoryPage.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -10,7 +12,7 @@ import 'package:printing/printing.dart';
 class InvoiceScreen extends StatelessWidget {
   final String userName;
   var invoices;
-
+  var location,userid;
   InvoiceScreen({required this.userName});
 
   @override
@@ -18,6 +20,65 @@ class InvoiceScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Invoice of ' + userName),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Elevated_button(
+              path: () {
+                 Get.dialog(AlertDialog(
+                   title: TextWidget(title: ' Main Categories'),
+                   content: Container(
+                     width: Get.width*0.5,
+                     child: StreamBuilder<QuerySnapshot>(
+                       stream: FirebaseFirestore.instance.collection('MainCategories').snapshots(),
+                       builder: (context,AsyncSnapshot<QuerySnapshot> snapshot) {
+                         if (snapshot.connectionState == ConnectionState.waiting) {
+                           return Center(child: CircularProgressIndicator());
+                         } else if (snapshot.hasError) {
+                           return Center(child: Text('Error: ${snapshot.error}'));
+                         } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                           return Center(child: Text('No categories available'));
+                         } else {
+                           return ListView.builder(
+                             shrinkWrap: true,
+                             itemCount: snapshot.data!.docs.length,
+                             itemBuilder: (context, index) {
+                               DocumentSnapshot category =snapshot.data!.docs[index];
+                               return InkWell(
+                                 onTap: (){
+                                   Get.to(SubCategoriesPage(Productname: category.id,userName:userName,address: location,userid: userid,));
+                                 },
+                                 child: ListTile(
+                                   title: TextWidget(title:category.id),
+                                   trailing: Icon(Icons.arrow_forward_ios_sharp),
+                                 ),
+                               );
+                             },
+                           );
+                         }
+                       },
+                     ),
+                   ),
+                   actions: [
+                     TextButton(
+                       onPressed: () {
+                         Get.back();
+                       },
+                       child: Text('Close'),
+                     ),
+                   ],
+                 ),);
+              },
+              color: Colors.white,
+              text: 'Buy Products',
+              radius: 7,
+              padding: 10,
+              width: 120,
+              height: 40,
+              backcolor: Colors.black87,
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -59,15 +120,14 @@ class InvoiceScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               String productId = groupedInvoices.keys.elementAt(index);
 
-              List<
-                  QueryDocumentSnapshot> idInvoices = groupedInvoices[productId]!;
-
+              List<QueryDocumentSnapshot> idInvoices = groupedInvoices[productId]!;
               double remainingPrice = idInvoices.fold(0, (sum, doc) {
                 productData = doc.data() as Map<String, dynamic>;
                 return sum +
                     (productData['Price Remaining'] / idInvoices.length ?? 0);
               });
-
+              location=productData['Address'];
+              userid=productData['User ID'];
               return Card(
                 color: Colors.black87,
                 margin: EdgeInsets.all(8.0),
@@ -117,6 +177,21 @@ class InvoiceScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           TextWidget(
+                            title: 'User Id:        ',
+                            color: Colors.green,
+                            size: 18,
+                          ),
+                          TextWidget(
+                            title: productData['User ID'],
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          TextWidget(
                             title: 'Date:        ',
                             color: Colors.green,
                             size: 18,
@@ -148,7 +223,7 @@ class InvoiceScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           TextWidget(
-                            title: 'Product Id:   ',
+                            title: 'Invoice ID',
                             color: Colors.white,
                             size: 18,
                           ),
@@ -331,7 +406,7 @@ class InvoiceScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(6.0),
                         child: TextWidget(
-                          title: '24-23 Barretts Green Road London, NW 10 7AE\ninfo@brandwaygroup.uk \n+442089617367',
+                          title: 'Address:    24-23 Barretts Green Road London, NW 10 7AE\nEmail:    info@brandwaygroup.uk \nMobile No:    +442089617367',
                           color: Colors.white,
                           size: 16,
                         ),
@@ -401,6 +476,8 @@ class InvoiceScreen extends StatelessWidget {
               pw.SizedBox(height: 10),
               pw.Text('Date: ${productData['Date']}'),
               pw.Text('Address: ${productData['Address']}'),
+              pw.SizedBox(height: 10),
+              pw.Text('User Id: ${productData['User ID']}'),
               pw.SizedBox(height: 10),
               pw.Text('Product Id: ${productData['Product id']}'),
               pw.SizedBox(height: 10),
@@ -472,6 +549,11 @@ class InvoiceScreen extends StatelessWidget {
                 ],
               ),
               pw.Divider(),
+              pw.SizedBox(height: 20),
+              pw.Center(
+                child: pw.Text('Details',
+                    style: pw.TextStyle(fontSize: 20)),
+              ),
               pw.Center(
                 child: pw.Text('24-23 Barretts Green Road London, NW 10 7AE\ninfo@brandwaygroup.uk \n+442089617367',
                     style: pw.TextStyle(fontSize: 20)),

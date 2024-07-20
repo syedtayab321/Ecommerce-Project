@@ -9,12 +9,21 @@ import 'package:get/get.dart';
 import 'package:ecommerce_app/Admin/DashboardPages/Cart%20Related/CartDetailsCard.dart';
 
 class CartScreen extends StatelessWidget {
-  TextEditingController NameController = new TextEditingController();
-  TextEditingController AddressController = new TextEditingController();
+  TextEditingController NameController;
+  TextEditingController AddressController;
   TextEditingController PriceToPayController = new TextEditingController(); // New controller
+  TextEditingController IdController; // New controller
   final TextEditingController _discountController = TextEditingController();
   CounterController _counterController = Get.put(CounterController());
   double Totalprice = 0.0;
+  final String? userName;
+  final String? address;
+  final String? userid;
+  CartScreen({this.userName,this.userid,this.address})
+      : NameController = TextEditingController(text: userName ?? ""),
+  AddressController = TextEditingController(text: address ?? ""),
+  IdController = TextEditingController(text: userid ?? "");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,6 +106,15 @@ class CartScreen extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Username',
                 hintText: 'Enter Name',
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: IdController,
+              decoration: InputDecoration(
+                labelText: 'UserId',
+                hintText: 'Enter User Id',
               ),
             ),
             SizedBox(height: 20),
@@ -196,8 +214,6 @@ class CartScreen extends StatelessWidget {
                       Elevated_button(
                         path: () {
                           Get.back();
-                          NameController.clear();
-                          AddressController.clear();
                           PriceToPayController.clear(); // Clear the new field
                           _discountController.clear();
                           _counterController.discountedPrice.value = Totalprice;
@@ -214,16 +230,18 @@ class CartScreen extends StatelessWidget {
                         path: () {
                           if (NameController.text.isNotEmpty &&
                               AddressController.text.isNotEmpty &&
-                              PriceToPayController.text.isNotEmpty) {
+                              PriceToPayController.text.isNotEmpty && IdController.text.isNotEmpty) {
                             var discountprice = _discountController.text.isNotEmpty ? _counterController.discountedPrice.value : Totalprice;
-                            addBuyNow(NameController.text, AddressController.text, discountprice,
+                            addBuyNow( IdController.text,NameController.text, AddressController.text, discountprice,
                               _discountController.text, Totalprice, _counterController.PricePaid.value, _counterController.PriceRemains.value,
                             );
                             NameController.clear();
                             AddressController.clear();
                             PriceToPayController.clear();
                             _discountController.clear();
-                            _counterController.discountedPrice.value = Totalprice;
+                            IdController.clear();
+                            _counterController.discountedPrice.value=0.0;
+                            _counterController.PriceRemains.value=0.0;
                             Get.back();
                           } else {
                             showErrorSnackbar(

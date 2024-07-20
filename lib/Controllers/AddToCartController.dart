@@ -18,6 +18,10 @@ class CounterController extends GetxController {
     }
   }
 
+  void setQuantity(int newQuantity) {
+    quantity.value = newQuantity;
+  }
+
   void updateDiscount(String value,double Totalprice) {
     discount.value = value.isEmpty ? 0.0 : double.parse(value);
     discountedPrice.value = Totalprice - (Totalprice * (discount.value / 100));

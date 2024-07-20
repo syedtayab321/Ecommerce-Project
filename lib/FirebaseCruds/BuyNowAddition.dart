@@ -5,13 +5,16 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 
 
-Future<void> addBuyNow(String userName, String address, double discountedPrice, String discount, double oldprice, double pricepaid, double Priceremains) async {
+Future<void> addBuyNow(String UserId,String userName, String address, double discountedPrice, String discount, double oldprice, double pricepaid, double Priceremains) async {
   bool isSuccess = false;
   QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Cart Data').get();
   List<QueryDocumentSnapshot> docs = snapshot.docs;
 
   try {
-    await FirebaseFirestore.instance.collection('Orders').doc(userName).set({});
+    await FirebaseFirestore.instance.collection('Orders').doc(userName).set({
+      'username':userName,
+      'userid':UserId,
+    });
     String productId = Uuid().v4();
 
     // Define the fields you want to keep
@@ -46,6 +49,7 @@ Future<void> addBuyNow(String userName, String address, double discountedPrice, 
       // Add additional fields
       filteredData['Product id'] = productId;
       filteredData['User Name'] = userName;
+      filteredData['User ID'] = UserId;
       filteredData['Address'] = address;
       filteredData['Discount'] = discount;
       filteredData['Price Before Discount'] = oldprice;

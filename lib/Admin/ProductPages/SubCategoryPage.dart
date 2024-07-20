@@ -11,8 +11,10 @@ import 'package:get/get.dart';
 
 class SubCategoriesPage extends StatefulWidget {
   final String Productname;
-
-  SubCategoriesPage({required this.Productname});
+  final String? userName;
+  final String? address;
+  final String? userid;
+  SubCategoriesPage({required this.Productname,this.userName, this.address,this.userid});
 
   @override
   State<SubCategoriesPage> createState() => _SubCategoriesPageState();
@@ -20,7 +22,6 @@ class SubCategoriesPage extends StatefulWidget {
 
 class _SubCategoriesPageState extends State<SubCategoriesPage> {
   TextEditingController _productnameController = new TextEditingController();
-
   final RxBool isLoading = false.obs;
 
   final SearchController searchController = Get.put(SearchController());
@@ -267,24 +268,31 @@ class _SubCategoriesPageState extends State<SubCategoriesPage> {
                         itemCount: filteredSubCategories.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot category = filteredSubCategories[index];
-                          return ListTileWidget(
-                            title: category.id,
-                            leadicon: Icons.cookie,
-                            icon:IconButton(
-                                onPressed: (){
-                                  showSubDocuments(context, category.id);
-                                },
-                                icon: Icon(Icons.expand_circle_down,color: Colors.white,)
-                            ) ,
-                            MainCategory: this.widget.Productname,
-                            onIconPressed: () {
+                          return InkWell(
+                            onTap: (){
                               Get.to(
                                 ProductDetailsCard(
                                   MainCategory: this.widget.Productname,
                                   SubCategory: category.id,
+                                  userName: widget.userName,
+                                  userid: widget.userid,
+                                  address: widget.address,
                                 ),
                               );
                             },
+                            child: ListTileWidget(
+                              title: category.id,
+                              leadicon: Icons.cookie,
+                              icon:IconButton(
+                                  onPressed: (){
+                                    showSubDocuments(context, category.id);
+                                  },
+                                  icon: Icon(Icons.expand_circle_down,color: Colors.white,)
+                              ) ,
+                              MainCategory: this.widget.Productname,
+                              onIconPressed: () {
+                              },
+                            ),
                           );
                         },
                       ),

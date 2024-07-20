@@ -30,13 +30,13 @@ class _HomePageState extends State<HomePage> {
          ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 6.0),
+        padding: const EdgeInsets.only(top: 16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child:AnimatedImageSlider(),
               ),
               Row(
@@ -132,7 +132,7 @@ class CategoryData extends StatelessWidget {
                               child: Image.network(
                                 ImageData['Image Url']!,
                                 fit: BoxFit.cover,
-                                height: 140,
+                                height:185,
                                 width: double.infinity,
                               ),
                             ),
@@ -166,7 +166,7 @@ class CategoryData extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
                             category.id,
                             style: TextStyle(

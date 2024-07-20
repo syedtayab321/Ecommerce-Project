@@ -6,17 +6,21 @@ import 'package:ecommerce_app/FirebaseCruds/CategoryDelete.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/DialogBox.dart';
 import 'package:ecommerce_app/widgets/DialogBoxes/ProductDialog.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/ElevatedButton.dart';
+import 'package:ecommerce_app/widgets/OtherWidgets/Snakbar.dart';
 import 'package:ecommerce_app/widgets/OtherWidgets/TextWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProductDetailsCard extends StatelessWidget {
   final String MainCategory, SubCategory;
+  final String? userName;
+  final String? address;
+  final String? userid;
 
   ProductDetailsCard({
     Key? key,
     required this.MainCategory,
-    required this.SubCategory,
+    required this.SubCategory,this.userName, this.address,this.userid
   }) : super(key: key);
 
   @override
@@ -28,7 +32,7 @@ class ProductDetailsCard extends StatelessWidget {
         ),
         actions: [
           IconButton(onPressed: (){
-            Get.to(CartScreen());
+            Get.to(userName==null?CartScreen(userName: userName,userid: userid,address: address,):CartScreen());
           }, icon: Icon(Icons.add_shopping_cart)),
           SizedBox(width: 20,),
           Padding(
@@ -74,25 +78,25 @@ class ProductDetailsCard extends StatelessWidget {
                 int stock = int.parse(ProductData['Stock'].toString());
                 double price = double.parse(ProductData['Price']);
                 return Card(
-                  color: Colors.black,
+                  color: Colors.lightBlue,
                   elevation: 8.0,
                   margin: EdgeInsets.all(12.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: IntrinsicHeight(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
                             child: Image.network(
                               ProductData['Image Url'],
-                              fit: BoxFit.cover,
-                              height: 160.0,
-                              width: double.infinity,
+                              fit: BoxFit.contain,
+                              height: 350,
+                              width: Get.width,
                             ),
                           ),
                           Padding(
@@ -118,7 +122,7 @@ class ProductDetailsCard extends StatelessWidget {
                                       '£${price.toStringAsFixed(2)}',
                                       style: TextStyle(
                                         fontSize: 18.0,
-                                        color: Colors.green,
+                                        color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -137,22 +141,24 @@ class ProductDetailsCard extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 TextWidget(
                                   title: 'Expiry Date',
                                   color: Colors.white,
+                                  size: 17,
                                 ),
                                 TextWidget(
                                   title: '${ProductData['ExpiryDate']}',
-                                  color: Colors.red,
+                                  color: Colors.white,
+                                  size: 17,
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 10.0),
+                          SizedBox(height: 6.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -171,13 +177,16 @@ class ProductDetailsCard extends StatelessWidget {
                               Elevated_button(
                                 path: () {
                                   stock <= 0
-                                      ? Get.snackbar('Out of stock', 'Items are out of stock', backgroundColor: Colors.red, colorText: Colors.white)
+                                      ? showErrorSnackbar('Product is out of stock')
                                       : Get.dialog(QuantitySelector(
                                     priceperitem: price,
                                     categoryName: SubCategory,
                                     stock: stock,
                                     MainCategory: MainCategory,
                                     ProductName: ProductData['name'],
+                                    userName: this.userName,
+                                    userid: this.userid,
+                                    address: this.address,
                                   ));
                                 },
                                 color: Colors.white,
